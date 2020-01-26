@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "452221653870",
+    "firebase_url": "https://ssay-mp.firebaseio.com",
+    "project_id": "ssay-mp",
+    "storage_bucket": "ssay-mp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:452221653870:android:9c2dd060ea3e34f064677f",
+        "android_client_info": {
+          "package_name": "com.tamadev.ssay_mp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "452221653870-p56tgspad250cbb1be96b2c0fbvhufvc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_qt_pTLjdu46moZuXm7W157GUi_G4njg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "452221653870-p56tgspad250cbb1be96b2c0fbvhufvc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
