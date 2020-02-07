@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnTop, btnLeft, btnBottom, btnRight, btnPrueba;
+    private Button btnTop, btnLeft, btnBottom, btnRight;
 
     private ArrayList<String> Secuencia = new ArrayList<String>();
 
@@ -43,14 +43,9 @@ public class MainActivity extends AppCompatActivity {
         btnLeft = (Button)findViewById(R.id.btnLeft);
         btnBottom = (Button)findViewById(R.id.btnBottom);
         btnRight = (Button)findViewById(R.id.btnRight);
-        btnPrueba = (Button)findViewById(R.id.prueba);
 
-        btnPrueba.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btnRight.setBackgroundColor(Color.parseColor("#000000"));
-            }
-        });
+
+
 
     }
     public void Play(){

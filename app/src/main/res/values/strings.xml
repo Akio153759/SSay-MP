@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">SSay-MP</string>
+    <string name="nombre">Nombre</string>
+    <string name="email">Correo Electrónico</string>
+    <string name="usuario">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="reppass">Confirmar Contraseña</string>
+    <string name="guardar">Guardar</string>
+    <string name="crearPartida">Crear Partida</string>
+    <string name="addAmigos">Añadir Amigo</string>
+    <string name="listaAmigos">Lista de Amigos</string>
+    <string name="solicitudesAmigos">Solicitudes de Amigos</string>
+    <string name="volver">Volver</string>
+    <string name="crearPerfil">Crear Perfil</string>
+    <string name="desplegarDatos">Desplegar Datos</string>
 </resources>

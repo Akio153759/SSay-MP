@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateNickActivity">
+
+    <LinearLayout
+        android:id="@+id/formulario"
+        android:layout_width="700px"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/tvNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2px"
+            android:gravity="center"
+            android:text="@string/nombre"
+            android:textColor="#000000" />
+
+        <EditText
+            android:id="@+id/etNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2px"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Ingrese su nombre"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/tvUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2px"
+            android:gravity="center"
+            android:text="@string/usuario"
+            android:textColor="#000000" />
+
+        <EditText
+            android:id="@+id/etUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2px"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Ingrese nombre de usuario"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/tvEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2px"
+            android:gravity="center"
+            android:text="@string/email"
+            android:textColor="#000000" />
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2px"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Ingrese su Email"
+            android:inputType="textEmailAddress" />
+
+        <TextView
+            android:id="@+id/tvPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2px"
+            android:gravity="center"
+            android:text="@string/password"
+            android:textColor="#000000" />
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2px"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Ingrese contraseña"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:id="@+id/tvRepPass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2px"
+            android:gravity="center"
+            android:text="@string/reppass"
+            android:textColor="#000000" />
+
+        <EditText
+            android:id="@+id/etRepPass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2px"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Repita la contraseña"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2px"
+            android:onClick="CrearPerfil"
+            android:text="@string/guardar" />
+
+    </LinearLayout>
+</RelativeLayout>

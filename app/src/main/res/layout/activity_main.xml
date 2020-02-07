@@ -50,14 +50,4 @@
         android:background="#584C00"
         android:onClick="pressBtnLeft" />
 
-    <Button
-        android:id="@+id/prueba"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="150dp"
-        android:layout_marginTop="26dp"
-        android:text="Button" />
-
 </RelativeLayout>
