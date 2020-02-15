@@ -13,4 +13,6 @@
     <string name="volver">Volver</string>
     <string name="crearPerfil">Crear Perfil</string>
     <string name="desplegarDatos">Desplegar Datos</string>
+    <string name="getDatos">Descargar Datos</string>
+    <string name="borrarDatos">Borrar Datos</string>
 </resources>

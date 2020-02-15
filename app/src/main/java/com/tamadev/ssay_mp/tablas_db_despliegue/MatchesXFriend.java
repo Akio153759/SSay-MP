@@ -1,33 +1,33 @@
 package com.tamadev.ssay_mp.tablas_db_despliegue;
 
 public class MatchesXFriend {
-    private int ID;
-    private String ID_Partida, Participante;
+    private int id;
+    private String id_Partida, participante;
 
     public MatchesXFriend() {
     }
 
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getID_Partida() {
-        return ID_Partida;
+    public String getId_Partida() {
+        return id_Partida;
     }
 
-    public void setID_Partida(String ID_Partida) {
-        this.ID_Partida = ID_Partida;
+    public void setId_Partida(String id_Partida) {
+        this.id_Partida = id_Partida;
     }
 
     public String getParticipante() {
-        return Participante;
+        return participante;
     }
 
     public void setParticipante(String participante) {
-        Participante = participante;
+        this.participante = participante;
     }
 }

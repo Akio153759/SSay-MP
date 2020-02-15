@@ -4,12 +4,24 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
+//Clase utilizada para crear el objeto de la partida y subirlo a Firebase
+
 public class CrearPartida {
     private int CantidadJugadores;
     private ArrayList<String> Jugadores;
     private ArrayList <String> Secuencia;
     private String ProximoJugador;
     private String ID;
+
+    public int getEstado() {
+        return Estado;
+    }
+
+    public void setEstado(int estado) {
+        Estado = estado;
+    }
+
+    private int Estado;
 
     public String getID() {
         return ID;
@@ -53,6 +65,7 @@ public class CrearPartida {
     public void setProximoJugador(String proximoJugador) {
         ProximoJugador = proximoJugador;
     }
+
     public String GenerarIDPartida(String _sTextoPlano){
         String _sIDFinal = "";
 

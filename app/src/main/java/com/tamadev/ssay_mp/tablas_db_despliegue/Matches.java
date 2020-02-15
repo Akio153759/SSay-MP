@@ -1,33 +1,41 @@
 package com.tamadev.ssay_mp.tablas_db_despliegue;
 
 public class Matches {
-    private String ID;
-    private int Cantidad_Jugadores, FlagTurno;
+    private String id;
+    private int cantidad_Jugadores, flagTurno, estado;
 
     public Matches() {
     }
 
-    public String getID() {
-        return ID;
+    public String getId() {
+        return id;
     }
 
-    public void setID(String ID) {
-        this.ID = ID;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public int getCantidad_Jugadores() {
-        return Cantidad_Jugadores;
+        return cantidad_Jugadores;
     }
 
     public void setCantidad_Jugadores(int cantidad_Jugadores) {
-        Cantidad_Jugadores = cantidad_Jugadores;
+        this.cantidad_Jugadores = cantidad_Jugadores;
     }
 
     public int getFlagTurno() {
-        return FlagTurno;
+        return flagTurno;
     }
 
     public void setFlagTurno(int flagTurno) {
-        FlagTurno = flagTurno;
+        this.flagTurno = flagTurno;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
 }

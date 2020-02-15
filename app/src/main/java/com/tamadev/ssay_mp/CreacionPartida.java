@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tamadev.ssay_mp.tablas_db_despliegue.Matches;
 
 import java.util.ArrayList;
 
@@ -52,10 +53,8 @@ public class CreacionPartida extends AppCompatActivity {
             cbAmigo4.setText(c.getString(0));
         }
 
-        Cursor _cUsuario = helper.GetUsuario();
-        if(_cUsuario.moveToFirst()){
-            _sUsuario = _cUsuario.getString(0);
-        }
+        _sUsuario = helper.GetDatoPerfil("Usuario");
+
         helper.close();
     }
 
@@ -100,8 +99,9 @@ public class CreacionPartida extends AppCompatActivity {
         Partida.setProximoJugador(_sUsuario);
         Partida.setSecuencia(Secuencia);
         Partida.setID(Partida.GenerarIDPartida(Jugadores.toString() + Secuencia.toString() + (int) (Math.random() * 999999)));
+        Partida.setEstado(0);
 
-        dbref = FirebaseDatabase.getInstance().getReference().child("Partidas");
+        dbref = FirebaseDatabase.getInstance().getReference();
 
         dbref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -116,24 +116,43 @@ public class CreacionPartida extends AppCompatActivity {
 
             }
         });
-        //Despliegue a DB Firebase
+
         try{
-            dbref.child(Partida.getID()).setValue(Partida);
+            //Creando partida en Firebase
+            dbref.child("Partidas").child(Partida.getID()).setValue(Partida);
+            //Creando partida en DB3
             helper = new SQLiteDB(this,"db",null,1);
-            helper.CrearPartida(Partida.getID(),Partida.getCantidadJugadores(),1);
+            helper.CrearPartida(Partida.getID(),Partida.getCantidadJugadores(),1,1);
+            Matches SolicitudPartida = new Matches();
             for(final String amigo: Partida.getJugadores()){
+
                 if(amigo.equals(_sUsuario)){
                     continue;
                 }
+                // Llenando tabla PartidaxAmigos
                 helper.CrearRelacionPartidaAmigos(Partida.getID(),amigo);
+                // Por cada participante de la partida
+                // Utilizo la clase matches para crear solicitud de partida ya que el
+                // objeto tiene la estrutura de la tabla Partidas en la db3
+                SolicitudPartida.setId(Partida.getID());
+                SolicitudPartida.setCantidad_Jugadores(Partida.getCantidadJugadores());
+                SolicitudPartida.setFlagTurno(0);
+                SolicitudPartida.setEstado(0);
+
+                dbref.child("Usuarios").child(amigo).child("Partidas").child(SolicitudPartida.getId()).setValue(SolicitudPartida);
             }
+            // Subiendo DB3
             helper.PushDB();
             helper.close();
+
             Toast.makeText(this,"Partida creada con éxito",Toast.LENGTH_SHORT).show();
         }
         catch (Exception e){
             Toast.makeText(this,"Ocurrió un error al crear partida",Toast.LENGTH_SHORT).show();
         }
+
+
+
 
         Intent i = new Intent(this,MenuPrincipal.class);
         startActivity(i);

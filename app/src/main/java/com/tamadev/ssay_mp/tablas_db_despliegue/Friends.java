@@ -1,33 +1,33 @@
 package com.tamadev.ssay_mp.tablas_db_despliegue;
 
 public class Friends {
-    private String Usuario, Nombre;
-    private int FlagAmigoConfirmado;
+    private String usuario, nombre;
+    private int estado;
 
     public Friends() {
     }
 
     public String getUsuario() {
-        return Usuario;
+        return usuario;
     }
 
     public void setUsuario(String usuario) {
-        Usuario = usuario;
+        this.usuario = usuario;
     }
 
     public String getNombre() {
-        return Nombre;
+        return nombre;
     }
 
     public void setNombre(String nombre) {
-        Nombre = nombre;
+        this.nombre = nombre;
     }
 
-    public int getFlagAmigoConfirmado() {
-        return FlagAmigoConfirmado;
+    public int getEstado() {
+        return estado;
     }
 
-    public void setFlagAmigoConfirmado(int flagAmigoConfirmado) {
-        FlagAmigoConfirmado = flagAmigoConfirmado;
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
 }
