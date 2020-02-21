@@ -3,7 +3,6 @@ package com.tamadev.ssay_mp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -11,7 +10,7 @@ import android.widget.Toast;
 
 import database.SQLiteDB;
 
-public class MenuPrincipal extends AppCompatActivity {
+public class MenuPrincipalActivity extends AppCompatActivity {
     private SQLiteDB helper;
     private String _sUsuario;
 
@@ -20,12 +19,7 @@ public class MenuPrincipal extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_principal);
 
-        helper = new SQLiteDB(this,"db",null,1);
-        _sUsuario = helper.GetDatoPerfil("Usuario");
-        String pathDB = getDatabasePath("db").toString();
-        String to = Environment.getExternalStorageDirectory().getPath() + "/Android/data/" + getPackageName() + "/" + "dbBK";
-        helper.copiaBD(pathDB,to);
-        helper.close();
+
     }
     public void CrearPartida(View view){
 
@@ -54,22 +48,34 @@ public class MenuPrincipal extends AppCompatActivity {
         helper.copiaBD(pathDB,to);
         helper.close();
     }
-    public void AddAmigo(View view){
-        Intent i = new Intent(this, Amigos.class);
+    public void goAmigos(View view){
+
+        Intent i = new Intent(this, AmigosActivity.class);
         startActivity(i);
         finish();
     }
     public void CrearPerfil(View view){
-        Intent i = new Intent(this, CreateNickActivity.class);
+        Intent i = new Intent(this, RegistroActivity.class);
+        startActivity(i);
+        finish();
+    }
+    public void Jugar(View view){
+        Intent i = new Intent(MenuPrincipalActivity.this,LobbyPartidasActivity.class);
         startActivity(i);
         finish();
     }
     public void BorrarDatos(View vie){
-        helper = new SQLiteDB(this,"db",null,1);
-        if(helper.BorrarDatos(_sUsuario) == true){
-            Toast.makeText(this,"Datos borrados con éxito",Toast.LENGTH_SHORT).show();
+        if(MenuPrincipalActivity.this.deleteDatabase("db")){
+            Intent i = new Intent(MenuPrincipalActivity.this,PantallaInicialActivity.class);
+            startActivity(i);
+            finish();
         } else{
-            Toast.makeText(this,"Error al eliminar datos",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Error al cerrar sesión",Toast.LENGTH_SHORT).show();
         }
+    }
+    public void Salir(View view)
+    {
+        System.exit(0);
+        finish();
     }
 }

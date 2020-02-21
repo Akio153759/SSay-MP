@@ -16,23 +16,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.tamadev.ssay_mp.herramientas_list_view.LV_SolicitudesAmistad;
-import com.tamadev.ssay_mp.tablas_db_despliegue.Friends;
+import com.tamadev.ssay_mp.classes.LV_Usuario;
+import com.tamadev.ssay_mp.utils.AlertDialogSearchUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import database.SQLiteDB;
 
-public class Amigos extends AppCompatActivity {
-    private SQLiteDB helper;
+public class AmigosActivity extends AppCompatActivity {
+    private SQLiteDB helper = new SQLiteDB(AmigosActivity.this,"db",null,1);
     private ListView lvAmigos, lvSolicitudes;
     private EditText etSearchAmigos;
     private Button btnEnviarSolicitud;
@@ -40,9 +39,13 @@ public class Amigos extends AppCompatActivity {
     private DatabaseReference dbref;
     private String _sUsuarioAgregar, _sNombreAgregar;
     private List_Adapter _lSolicitudesAdapter;
-    private ArrayList<LV_SolicitudesAmistad> _lSolicitudes;
+    private ArrayList<LV_Usuario> _lSolicitudes;
     private ArrayList<String> _lAmigos;
     private ArrayAdapter<String> _lamigosAdapter;
+    private DatabaseReference DBrefUsuario ;
+
+
+
 
 
     @Override
@@ -53,22 +56,65 @@ public class Amigos extends AppCompatActivity {
         lvAmigos = (ListView)findViewById(R.id.lvAmigos);
         lvSolicitudes = (ListView)findViewById(R.id.lvSolicitudes);
 
+
+        _lAmigos = new ArrayList<>();
+        _lamigosAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item, _lAmigos);
+        _lamigosAdapter.setNotifyOnChange(true);
+        lvAmigos.setAdapter(_lamigosAdapter);
+
+        _lSolicitudes = new ArrayList<>();
+        _lSolicitudesAdapter = new List_Adapter(this,R.layout.item_row_solicitudes,_lSolicitudes);
+        _lSolicitudesAdapter.setNotifyOnChange(true);
+        lvSolicitudes.setAdapter(_lSolicitudesAdapter);
+
+        DBrefUsuario = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(helper.GetUser());
+        /*
         etSearchAmigos = (EditText)findViewById(R.id.etSearchAmigos);
 
         tvResultadoBusqueda = (TextView)findViewById(R.id.tvResultadoBusqueda);
 
         btnEnviarSolicitud = (Button)findViewById(R.id.btnEnviarSolicitud);
+*/
+        DBrefUsuario.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot Nodos) {
+                for(DataSnapshot nodo: Nodos.getChildren()){
+                    switch (nodo.getKey()){
+                        case "Solicitudes":
+                            _lSolicitudes.clear();
+                            for(DataSnapshot solicitud: nodo.getChildren()){
 
-        btnEnviarSolicitud.setVisibility(View.INVISIBLE);
+                                _lSolicitudes.add(new LV_Usuario(solicitud.getValue().toString()));
+                            }
+                                _lSolicitudesAdapter.notifyDataSetChanged();
+                            break;
+                        case "Amigos":
+                            _lAmigos.clear();
+                            for(DataSnapshot amigo: nodo.getChildren()) {
+
+                                _lAmigos.add(amigo.getValue().toString());
+                            }
+                            _lamigosAdapter.notifyDataSetChanged();
+                            break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
-        SearchAmigos();
-        SearchSolicitudes();
+
     }
     public void Regresar(View view){
-        Intent i = new Intent(this, MenuPrincipal.class);
+        Intent i = new Intent(this, MenuPrincipalActivity.class);
         startActivity(i);
+        finish();
     }
+    /*
     public void SearchUsuario(View view){
         final String _sInputAmigos = etSearchAmigos.getText().toString().trim();
         if(_sInputAmigos.isEmpty()){
@@ -92,7 +138,7 @@ public class Amigos extends AppCompatActivity {
                     }
                     catch (Exception e){
                         e.printStackTrace();
-                        Toast.makeText(Amigos.this,"No se encontró resultado",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AmigosActivity.this,"No se encontró resultado",Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -104,12 +150,19 @@ public class Amigos extends AppCompatActivity {
         });
 
     }
+*/
 
     public void SearchAmigos(){
+
+
+
+
+        //--------------------
+        /*
         helper = new SQLiteDB(this,"db",null,1);
 
         Cursor c = helper.ConsultarAmigos();
-        _lAmigos = new ArrayList<>();
+
         if(c.moveToFirst()){
             do{
                 _lAmigos.add((c.getString(0)));
@@ -120,36 +173,42 @@ public class Amigos extends AppCompatActivity {
 
         }
         helper.close();
-        _lamigosAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item, _lAmigos);
-        _lamigosAdapter.setNotifyOnChange(true);
-        lvAmigos.setAdapter(_lamigosAdapter);
+
+         */
+
     }
+
+
     public void SearchSolicitudes(){
+
+
+        //---------------------------------------
+        /*
         helper = new SQLiteDB(this,"db",null,1);
 
         Cursor c = helper.ConsultarSolicitudesAmistad();
-        _lSolicitudes = new ArrayList<>();
+
         if(c.moveToFirst()){
             do{
-                _lSolicitudes.add(new LV_SolicitudesAmistad(c.getString(0)));
+                _lSolicitudes.add(new LV_Usuario(c.getString(0)));
             }while (c.moveToNext());
         }
         else{
 
         }
         helper.close();
-        _lSolicitudesAdapter = new List_Adapter(this,R.layout.item_row,_lSolicitudes);
-        _lSolicitudesAdapter.setNotifyOnChange(true);
-        lvSolicitudes.setAdapter(_lSolicitudesAdapter);
+
+
+         */
 
     }
-
+/*
     public void EnviarSolicitud(View view){
         // Agrego el amigo en estado 0 (solicitud pendiente) en la db3
         helper.AgregarAmigo(_sUsuarioAgregar,_sNombreAgregar,0);
 
         // Utilizo la clase friends para crear el objeto de solicitud de amistad
-        // ya que tiene la misma estructura que la tabla Amigos en la db3
+        // ya que tiene la misma estructura que la tabla AmigosActivity en la db3
         // y lo inserto en Firebase en estado de "Solicitud recibida"
         Friends SolicitudAmistad = new Friends();
         SolicitudAmistad.setUsuario(helper.GetDatoPerfil("Usuario"));
@@ -157,22 +216,23 @@ public class Amigos extends AppCompatActivity {
         SolicitudAmistad.setEstado(1);
 
 
-        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(_sUsuarioAgregar).child("Amigos").child(helper.GetDatoPerfil("Usuario"));
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(_sUsuarioAgregar).child("AmigosActivity").child(helper.GetDatoPerfil("Usuario"));
         dbref.setValue(SolicitudAmistad);
-
+        helper.PushDB();
         helper.close();
         Toast.makeText(this,"Solicitud de amistad enviada a " + _sUsuarioAgregar,Toast.LENGTH_SHORT).show();
         btnEnviarSolicitud.setVisibility(View.INVISIBLE);
 
     }
+*/
 
-    private class List_Adapter extends ArrayAdapter<LV_SolicitudesAmistad> {
+    private class List_Adapter extends ArrayAdapter<LV_Usuario> {
 
-        private List<LV_SolicitudesAmistad> mList;
+        private List<LV_Usuario> mList;
         private Context mContext;
         private int resourceLayout;
         SQLiteDB helper;
-        public List_Adapter(@NonNull Context context, int resource, @NonNull List<LV_SolicitudesAmistad> objects) {
+        public List_Adapter(@NonNull Context context, int resource, @NonNull List<LV_Usuario> objects) {
             super(context, resource, objects);
             this.mList = objects;
             this.mContext = context;
@@ -187,7 +247,7 @@ public class Amigos extends AppCompatActivity {
             if(view == null){
                 view = LayoutInflater.from(mContext).inflate(resourceLayout,null);
             }
-            final LV_SolicitudesAmistad modelo = mList.get(position);
+            final LV_Usuario modelo = mList.get(position);
 
             TextView tvUsuarioSolicitud = view.findViewById(R.id.tvUsuarioSolicitud);
             tvUsuarioSolicitud.setText(modelo.getSolicitud_usuario());
@@ -203,80 +263,22 @@ public class Amigos extends AppCompatActivity {
             btnAceptarSolicitud.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    helper.Confirmar_Rechazar_SolicitudAmistad(modelo.getSolicitud_usuario(),2);
-
-                    // Sitúo la referencia a firebase en el nodo de la persona que envio la solicitud - en sus amigos -
-                    // en mi registro de amigo, donde el estado actual es 0 por que el envió la solicitud
-                    // y asi poder cambiarlo a 2 (Aceptado)
-                    dbref = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(modelo.getSolicitud_usuario()).child("Amigos").child(helper.GetDatoPerfil("Usuario")).child("estado");
-                    dbref.setValue("2");
-
-                    // aca limpio los dataList de las solicitudes y los amigos y los recargo
-                    _lSolicitudes.clear();
-                    _lAmigos.clear();
-
-                    Cursor _cSolicitudes = helper.ConsultarSolicitudesAmistad();
-                    Cursor _cAmigos = helper.ConsultarAmigos();
-
-                    if(_cAmigos.moveToFirst()){
-                        do{
-                            _lAmigos.add((_cAmigos.getString(0)));
-                        }while (_cAmigos.moveToNext());
-                    }
-                    else{
-                        _lAmigos.add("Aún no tienes amigos");
-
-                    }
-
-                    if(_cSolicitudes.moveToFirst()){
-                        do{
-                            _lSolicitudes.add(new LV_SolicitudesAmistad(_cSolicitudes.getString(0)));
-                        }while (_cSolicitudes.moveToNext());
-                    }
-                    else{
-
-                    }
-                    _lSolicitudesAdapter.notifyDataSetChanged();
-                    _lamigosAdapter.notifyDataSetChanged();
-                    helper.close();
-
-
-
+                    DBrefUsuario.child("Amigos").push().setValue(modelo.getSolicitud_usuario());
+                    DBrefUsuario.child("Solicitudes").removeValue().equals(modelo.getSolicitud_usuario());
                 }
             });
 
             btnRechazarSolicitd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    helper.Confirmar_Rechazar_SolicitudAmistad(modelo.getSolicitud_usuario(),3);
-
-                    // Sitúo la referencia a firebase en el nodo de la persona que envio la solicitud - en sus amigos -
-                    // en mi registro de amigo, donde el estado actual es 0 por que el envió la solicitud
-                    // y asi poder cambiarlo a 3 (Rechazado)
-                    dbref = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(modelo.getSolicitud_usuario()).child("Amigos").child(helper.GetDatoPerfil("Usuario")).child("estado");
-                    dbref.setValue("3");
-
-                    // aca limpio el dataList de las solicitudes y lo recargo
-                    _lSolicitudes.clear();
-
-                    Cursor c = helper.ConsultarSolicitudesAmistad();
-
-                    if(c.moveToFirst()){
-                        do{
-                            _lSolicitudes.add(new LV_SolicitudesAmistad(c.getString(0)));
-                        }while (c.moveToNext());
-                    }
-                    else{
-                        _lSolicitudes.add(new LV_SolicitudesAmistad("No tienes solicitudes pendientes"));
-                    }
-                    _lSolicitudesAdapter.notifyDataSetChanged();
-                    helper.close();
-
-
+                    DBrefUsuario.child("Solicitudes").removeValue().equals(modelo.getSolicitud_usuario());
                 }
             });
 
-            return  view;
+            return view;
         }
+    }
+    public void BuscarAmigo(View view){
+        new AlertDialogSearchUser(AmigosActivity.this);
     }
 }

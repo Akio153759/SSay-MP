@@ -1,4 +1,4 @@
-package com.tamadev.ssay_mp;
+package com.tamadev.ssay_mp.classes;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -7,11 +7,12 @@ import java.util.ArrayList;
 //Clase utilizada para crear el objeto de la partida y subirlo a Firebase
 
 public class CrearPartida {
-    private int CantidadJugadores;
-    private ArrayList<String> Jugadores;
-    private ArrayList <String> Secuencia;
-    private String ProximoJugador;
-    private String ID;
+    private int cantidadJugadores;
+    private ArrayList<String> jugadores;
+    private ArrayList <String> secuencia;
+    private String proximoJugador;
+    private String id;
+    private String anfitrion;
 
     public int getEstado() {
         return Estado;
@@ -24,46 +25,46 @@ public class CrearPartida {
     private int Estado;
 
     public String getID() {
-        return ID;
+        return id;
     }
 
     public void setID(String ID) {
-        this.ID = ID;
+        this.id = ID;
     }
 
     public CrearPartida() {
     }
 
     public int getCantidadJugadores() {
-        return CantidadJugadores;
+        return cantidadJugadores;
     }
 
     public void setCantidadJugadores(int cantidadJugadores) {
-        CantidadJugadores = cantidadJugadores;
+        this.cantidadJugadores = cantidadJugadores;
     }
 
     public ArrayList<String> getJugadores() {
-        return Jugadores;
+        return jugadores;
     }
 
     public void setJugadores(ArrayList<String> jugadores) {
-        Jugadores = jugadores;
+        this.jugadores = jugadores;
     }
 
     public ArrayList<String> getSecuencia() {
-        return Secuencia;
+        return secuencia;
     }
 
     public void setSecuencia(ArrayList<String> secuencia) {
-        Secuencia = secuencia;
+        this.secuencia = secuencia;
     }
 
     public String getProximoJugador() {
-        return ProximoJugador;
+        return proximoJugador;
     }
 
     public void setProximoJugador(String proximoJugador) {
-        ProximoJugador = proximoJugador;
+        this.proximoJugador = proximoJugador;
     }
 
     public String GenerarIDPartida(String _sTextoPlano){
@@ -87,5 +88,13 @@ public class CrearPartida {
         }
 
         return _sIDFinal;
+    }
+
+    public String getAnfitrion() {
+        return anfitrion;
+    }
+
+    public void setAnfitrion(String anfitrion) {
+        this.anfitrion = anfitrion;
     }
 }

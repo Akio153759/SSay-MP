@@ -1,4 +1,4 @@
-package com.tamadev.ssay_mp.tablas_db_despliegue;
+package com.tamadev.ssay_mp.classes;
 
 public class MatchesXFriend {
     private int id;

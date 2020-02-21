@@ -5,9 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,22 +17,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.tamadev.ssay_mp.tablas_db_despliegue.Friends;
-import com.tamadev.ssay_mp.tablas_db_despliegue.Matches;
-import com.tamadev.ssay_mp.tablas_db_despliegue.MatchesXFriend;
-import com.tamadev.ssay_mp.tablas_db_despliegue.Profile;
-
-import org.json.JSONArray;
+import com.tamadev.ssay_mp.classes.CrearPartida;
+import com.tamadev.ssay_mp.classes.Friends;
+import com.tamadev.ssay_mp.classes.Matches;
+import com.tamadev.ssay_mp.classes.MatchesXFriend;
+import com.tamadev.ssay_mp.classes.Profile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SQLiteDB extends SQLiteOpenHelper {
+    private CrearPartida _qPartida = new CrearPartida();
     public SQLiteDB(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
@@ -45,18 +43,20 @@ public class SQLiteDB extends SQLiteOpenHelper {
                                "ID VARCHAR(32) primary key," +
                                "Cantidad_Jugadores Integer," +
                                "FlagTurno Integer," +
-                               "Estado Integer)";
+                               "Estado Integer," +
+                               "Anfitrion VARCHAR(15))";
         String crearPartidaXAmigos = "create table PartidaXAmigos(ID Integer primary key autoincrement," +
                                                                  "ID_Partida VARCHAR(20), " +
                                                                  "Participante VARCHAR(15), " +
-                                                                 "foreign key(Participante) references Amigos(Usuario)," +
                                                                  "foreign key(ID_Partida) references Partidas(ID))";
+        String crearSesionIniciada = "create table SesionIniciada(Usuario VARCHAR(15) primary key)";
 
 
         db.execSQL(crearPerfil);
         db.execSQL(crearAmigos);
         db.execSQL(crearPartidas);
         db.execSQL(crearPartidaXAmigos);
+        db.execSQL(crearSesionIniciada);
     }
 
     @Override
@@ -96,9 +96,9 @@ public class SQLiteDB extends SQLiteOpenHelper {
         boolean _bRes=false;
         try {
             SQLiteDB.this.getWritableDatabase().delete("Perfil","Usuario = '" + usuario+"'",null);
-            SQLiteDB.this.getWritableDatabase().rawQuery("delete from Amigos",null);
-            SQLiteDB.this.getWritableDatabase().rawQuery("delete from Partidas",null);
-            SQLiteDB.this.getWritableDatabase().rawQuery("delete from PartidaXAmigos",null);
+            SQLiteDB.this.getWritableDatabase().execSQL("delete from Amigos");
+            SQLiteDB.this.getWritableDatabase().execSQL("delete from Partidas");
+            SQLiteDB.this.getWritableDatabase().execSQL("delete from PartidaXAmigos");
             _bRes = true;
         }
         catch (SQLException e){
@@ -161,13 +161,14 @@ public class SQLiteDB extends SQLiteOpenHelper {
             } else {
                 dbref.child(tablaPerfil.getUsuario()).child("Amigos").setValue("Sin Datos");
             }
-
+/*
             if (_cPartidas.moveToFirst()) {
                 do {
                     tablaPartidas.setId(_cPartidas.getString(0));
                     tablaPartidas.setCantidad_Jugadores(_cPartidas.getInt(1));
                     tablaPartidas.setFlagTurno(_cPartidas.getInt(2));
                     tablaPartidas.setEstado(_cPartidas.getInt(3));
+                    tablaPartidas.setAnfitrion(_cPartidas.getString(4));
 
                     dbref.child(tablaPerfil.getUsuario()).child("Partidas").child(tablaPartidas.getId()).setValue(tablaPartidas);
                 } while (_cPartidas.moveToNext());
@@ -187,6 +188,7 @@ public class SQLiteDB extends SQLiteOpenHelper {
             else {
                 dbref.child(tablaPerfil.getUsuario()).child("PartidasXAmigos").setValue("Sin Datos");
             }
+            */
             _mensajeFinal = "Datos desplegados exitosamente";
         }
         catch (Exception e){
@@ -195,102 +197,170 @@ public class SQLiteDB extends SQLiteOpenHelper {
         return _mensajeFinal;
     }
 
-    public void GetDB(final String Usuario, boolean LogueoInicial) throws SQLException{
+    public void GetDB(final String Usuario, boolean LogueoInicial) throws SQLException
+    {
+        if(LogueoInicial == true)
+        {
+            try
+            {
+                DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(Usuario);
 
+                // Obtengo los datos del nodo Perfil, elimino los datos de la tabla perfil y los inserto nuevamente
+                dbref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                    {
+                        for (DataSnapshot nodo : dataSnapshot.getChildren())
+                        {
+                            switch (nodo.getKey())
+                            {
+                                case "Perfil":
+                                    Profile nodoPerfil = dataSnapshot.child(nodo.getKey()).getValue(Profile.class);
 
+                                    SQLiteDB.this.RegistrarPerfil(nodoPerfil.getUsuario(), nodoPerfil.getNombre(), nodoPerfil.getPassword(), nodoPerfil.getEmail());
+                                    break;
 
-        if(LogueoInicial == true){
+                                case "Amigos":
+                                    for (DataSnapshot amigo : nodo.getChildren())
+                                    {
+                                        Friends nodoAmigos = nodo.child(amigo.getKey()).getValue(Friends.class);
+                                        SQLiteDB.this.AgregarAmigo(nodoAmigos.getUsuario(), nodoAmigos.getNombre(), nodoAmigos.getEstado());
+                                    }
+                                    break;
+                                    /*
+                                case "Partidas":
+                                    for (DataSnapshot partida : nodo.getChildren())
+                                    {
+                                        Matches nodoPartida = nodo.child(partida.getKey()).getValue(Matches.class);
+                                        SQLiteDB.this.CrearPartida(nodoPartida.getId(), nodoPartida.getCantidad_Jugadores(), nodoPartida.getFlagTurno(), nodoPartida.getEstado(),nodoPartida.getAnfitrion());
+                                    }
+                                    break;
+                                case "PartidasXAmigos":
+                                    for (DataSnapshot relacion : nodo.getChildren())
+                                    {
+                                        MatchesXFriend nodoPartidaXAmigos = nodo.child(relacion.getKey()).getValue(MatchesXFriend.class);
 
-        }
-        else {
+                                        // aca no uso el metodo CrearRelacionPartidaAmigos para insertar el registro
+                                        // porque ese metodo utiliza el autoincrementable, aca el id esta predefinido
+                                        ContentValues datosRelaciones = new ContentValues();
 
-        }
+                                        datosRelaciones.put("ID", nodoPartidaXAmigos.getId());
+                                        datosRelaciones.put("ID_Partida", nodoPartidaXAmigos.getId_Partida());
+                                        datosRelaciones.put("Participante", nodoPartidaXAmigos.getParticipante());
 
-        try {
+                                        SQLiteDB.this.getWritableDatabase().insert("PartidaXAmigos", null, datosRelaciones);
+                                    }
+                                    break;
 
-            DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(Usuario);
-
-
-            // Obtengo los datos del nodo Perfil, elimino los datos de la tabla perfil y los inserto nuevamente
-            dbref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot nodo : dataSnapshot.getChildren()) {
-                        switch (nodo.getKey()) {
-                            case "Perfil":
-                                try{
-                                    SQLiteDB.this.getWritableDatabase().delete("Perfil","Usuario='" +Usuario + "'",null);
-                                }
-                                catch (SQLException e){
-                                    e.printStackTrace();
-                                }
-
-                                Profile nodoPerfil = dataSnapshot.child(nodo.getKey()).getValue(Profile.class);
-
-                                SQLiteDB.this.RegistrarPerfil(nodoPerfil.getUsuario(), nodoPerfil.getNombre(), nodoPerfil.getPassword(), nodoPerfil.getEmail());
-                                break;
-
-                            case "Amigos":
-                                try{
-                                    SQLiteDB.this.getWritableDatabase().execSQL("delete from Amigos");
-                                }
-                                catch (SQLException e){
-                                    e.printStackTrace();
-                                }
-
-                                for (DataSnapshot amigo : nodo.getChildren()) {
-                                    Friends nodoAmigos = nodo.child(amigo.getKey()).getValue(Friends.class);
-                                    SQLiteDB.this.AgregarAmigo(nodoAmigos.getUsuario(), nodoAmigos.getNombre(), nodoAmigos.getEstado());
-
-                                }
-                                break;
-                            case "Partidas":
-                                try{
-                                    SQLiteDB.this.getWritableDatabase().execSQL("delete from Partidas");
-                                }
-                                catch (SQLException e){
-                                    e.printStackTrace();
-                                }
-                                for (DataSnapshot partida : nodo.getChildren()) {
-                                    Matches nodoPartida = nodo.child(partida.getKey()).getValue(Matches.class);
-                                    SQLiteDB.this.CrearPartida(nodoPartida.getId(), nodoPartida.getCantidad_Jugadores(), nodoPartida.getFlagTurno(), nodoPartida.getEstado());
-                                }
-                                break;
-                            case "PartidasXAmigos":
-                                try{
-                                    SQLiteDB.this.getWritableDatabase().execSQL("delete from PartidaXAmigos");
-                                }
-                                catch (SQLException e){
-                                    e.printStackTrace();
-                                }
-                                for (DataSnapshot relacion : nodo.getChildren()) {
-                                    MatchesXFriend nodoPartidaXAmigos = nodo.child(relacion.getKey()).getValue(MatchesXFriend.class);
-
-                                    ContentValues datosRelaciones = new ContentValues();
-
-                                    datosRelaciones.put("ID", nodoPartidaXAmigos.getId());
-                                    datosRelaciones.put("ID_Partida", nodoPartidaXAmigos.getId_Partida());
-                                    datosRelaciones.put("Participante", nodoPartidaXAmigos.getParticipante());
-
-                                    SQLiteDB.this.getWritableDatabase().insert("PartidaXAmigos", null, datosRelaciones);
-                                }
-                                break;
+                                     */
+                            }
                         }
+
+
                     }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
+                    }
+                });
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
+            }
+            catch (Exception e){
+                System.out.println(e);
+            }
         }
-        catch (Exception e){
-            System.out.println(e);
+        else {
+            try {
+
+                DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(Usuario);
+
+
+                // Obtengo los datos del nodo Perfil, elimino los datos de la tabla perfil y los inserto nuevamente
+                dbref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot nodo : dataSnapshot.getChildren()) {
+                            switch (nodo.getKey()) {
+                                case "Perfil":
+                                    try{
+                                        SQLiteDB.this.getWritableDatabase().delete("Perfil","Usuario='" +Usuario + "'",null);
+                                    }
+                                    catch (SQLException e){
+                                        e.printStackTrace();
+                                    }
+
+                                    Profile nodoPerfil = dataSnapshot.child(nodo.getKey()).getValue(Profile.class);
+
+                                    SQLiteDB.this.RegistrarPerfil(nodoPerfil.getUsuario(), nodoPerfil.getNombre(), nodoPerfil.getPassword(), nodoPerfil.getEmail());
+                                    break;
+
+                                case "Amigos":
+                                    try{
+                                        SQLiteDB.this.getWritableDatabase().execSQL("delete from Amigos");
+                                    }
+                                    catch (SQLException e){
+                                        e.printStackTrace();
+                                    }
+
+                                    for (DataSnapshot amigo : nodo.getChildren()) {
+                                        Friends nodoAmigos = nodo.child(amigo.getKey()).getValue(Friends.class);
+                                        SQLiteDB.this.AgregarAmigo(nodoAmigos.getUsuario(), nodoAmigos.getNombre(), nodoAmigos.getEstado());
+
+                                    }
+                                    break;
+                                case "Partidas":
+                                    try{
+                                        SQLiteDB.this.getWritableDatabase().execSQL("delete from Partidas");
+                                    }
+                                    catch (SQLException e){
+                                        e.printStackTrace();
+                                    }
+                                    for (DataSnapshot partida : nodo.getChildren()) {
+                                        Matches nodoPartida = nodo.child(partida.getKey()).getValue(Matches.class);
+                                        SQLiteDB.this.CrearPartida(nodoPartida.getId(), nodoPartida.getCantidad_Jugadores(), nodoPartida.getFlagTurno(), nodoPartida.getEstado(),nodoPartida.getAnfitrion());
+                                    }
+                                    break;
+                                case "PartidasXAmigos":
+                                    try{
+                                        SQLiteDB.this.getWritableDatabase().execSQL("delete from PartidaXAmigos");
+                                    }
+                                    catch (SQLException e){
+                                        e.printStackTrace();
+                                    }
+                                    for (DataSnapshot relacion : nodo.getChildren())
+                                    {
+                                        MatchesXFriend nodoPartidaXAmigos = nodo.child(relacion.getKey()).getValue(MatchesXFriend.class);
+                                        // aca no uso el metodo CrearRelacionPartidaAmigos para insertar el registro
+                                        // porque ese metodo utiliza el autoincrementable, aca el id esta predefinido
+                                        ContentValues datosRelaciones = new ContentValues();
+
+                                        datosRelaciones.put("ID", nodoPartidaXAmigos.getId());
+                                        datosRelaciones.put("ID_Partida", nodoPartidaXAmigos.getId_Partida());
+                                        datosRelaciones.put("Participante", nodoPartidaXAmigos.getParticipante());
+
+                                        SQLiteDB.this.getWritableDatabase().insert("PartidaXAmigos", null, datosRelaciones);
+                                    }
+                                    break;
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+            catch (Exception e){
+                System.out.println(e);
+            }
         }
+
+
 
 
     }
@@ -335,12 +405,13 @@ public class SQLiteDB extends SQLiteOpenHelper {
         }
         return result;
     }
-    public void CrearPartida(String ID, int CantidadJugadores, int FlagTurno, int Estado){
+    public void CrearPartida(String ID, int CantidadJugadores, int FlagTurno, int Estado, String Anfitrion){
         ContentValues datosDePartida = new ContentValues();
         datosDePartida.put("ID", ID);
         datosDePartida.put("Cantidad_Jugadores",CantidadJugadores);
         datosDePartida.put("FlagTurno",FlagTurno);
         datosDePartida.put("Estado", Estado);
+        datosDePartida.put("Anfitrion",Anfitrion);
 
         this.getWritableDatabase().insert("Partidas",null,datosDePartida);
     }
@@ -349,5 +420,50 @@ public class SQLiteDB extends SQLiteOpenHelper {
         datos.put("ID_Partida", ID_Partida);
         datos.put("Participante", Participante);
         this.getWritableDatabase().insert("PartidaXAmigos",null,datos);
+    }
+    public Cursor ConsultarPartidas() throws SQLiteException {
+        Cursor _cSelectPartidas = this.getReadableDatabase().rawQuery("select * from Partidas",null);
+
+        return _cSelectPartidas;
+    }
+    public Cursor ConsultarParticipantesPartidas(String _sIDPartida) throws SQLiteException{
+        Cursor _cParticipantes = this.getReadableDatabase().rawQuery("select Participante from PartidaXAmigos where ID_Partida = '"+_sIDPartida+"'",null);
+
+        return _cParticipantes;
+    }
+
+    public CrearPartida getPartida(String _sIDPartida)throws SQLException{
+
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Partidas").child(_sIDPartida);
+        dbref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    _qPartida = dataSnapshot.getValue(CrearPartida.class);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return _qPartida;
+    }
+
+    public String GetUser(){
+        String _sUser = "";
+        Cursor _cUser = this.getReadableDatabase().rawQuery("select Usuario from SesionIniciada",null);
+        if(_cUser.moveToFirst()){
+            _sUser = _cUser.getString(0);
+        }
+        _cUser.close();
+        return  _sUser;
+    }
+    public void GuardarInicioSesion(String _sUser){
+        ContentValues cvDato = new ContentValues();
+        cvDato.put("Usuario",_sUser);
+        this.getWritableDatabase().insert("SesionIniciada",null,cvDato);
     }
 }

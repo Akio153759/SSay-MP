@@ -4,56 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MenuPrincipal">
+    tools:context=".MenuPrincipalActivity">
 
     <LinearLayout
-        android:layout_width="700px"
+        android:layout_width="200dp"
         android:layout_height="match_parent"
         android:gravity="bottom"
         android:orientation="vertical"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp">
-
-        <Button
-            android:id="@+id/button9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="BorrarDatos"
-            android:text="@string/borrarDatos" />
-
-        <Button
-            android:id="@+id/button5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="DesplegarDatos"
-            android:text="@string/desplegarDatos" />
-
-        <Button
-            android:id="@+id/btnCrearPerfil"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="CrearPerfil"
-            android:text="@string/crearPerfil" />
+        android:layout_marginBottom="100dp">
 
         <Button
             android:id="@+id/button2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="CrearPartida"
-            android:text="@string/crearPartida" />
+            android:onClick="Jugar"
+            android:text="Jugar" />
 
         <Button
             android:id="@+id/button3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="AddAmigo"
-            android:text="@string/addAmigos" />
+            android:onClick="goAmigos"
+            android:text="Amigos" />
 
         <Button
-            android:id="@+id/button8"
+            android:id="@+id/button9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="DescargarDatos"
-            android:text="@string/getDatos" />
+            android:layout_marginTop="40dp"
+            android:onClick="Salir"
+            android:text="Salir" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:gravity="center"
+            android:onClick="BorrarDatos"
+            android:text="Cerrar sesión" />
+
     </LinearLayout>
 </RelativeLayout>

@@ -1,12 +1,12 @@
-package com.tamadev.ssay_mp.herramientas_list_view;
+package com.tamadev.ssay_mp.classes;
 
 import android.widget.Button;
 
-public class LV_SolicitudesAmistad {
+public class LV_Usuario {
     private String Solicitud_usuario;
 
 
-    public LV_SolicitudesAmistad(String solicitud_usuario) {
+    public LV_Usuario(String solicitud_usuario) {
         Solicitud_usuario = solicitud_usuario;
 
     }

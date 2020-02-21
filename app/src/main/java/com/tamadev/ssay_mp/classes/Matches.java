@@ -1,7 +1,7 @@
-package com.tamadev.ssay_mp.tablas_db_despliegue;
+package com.tamadev.ssay_mp.classes;
 
 public class Matches {
-    private String id;
+    private String id, anfitrion;
     private int cantidad_Jugadores, flagTurno, estado;
 
     public Matches() {
@@ -37,5 +37,13 @@ public class Matches {
 
     public void setEstado(int estado) {
         this.estado = estado;
+    }
+
+    public String getAnfitrion() {
+        return anfitrion;
+    }
+
+    public void setAnfitrion(String anfitrion) {
+        this.anfitrion = anfitrion;
     }
 }
