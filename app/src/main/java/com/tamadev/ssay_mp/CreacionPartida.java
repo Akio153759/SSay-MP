@@ -12,18 +12,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.tamadev.ssay_mp.classes.CrearPartida;
+import com.tamadev.ssay_mp.classes.Jugador;
 import com.tamadev.ssay_mp.classes.LV_Usuario;
-import com.tamadev.ssay_mp.classes.Matches;
+import com.tamadev.ssay_mp.classes.SolicitudPartida;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +36,15 @@ import database.SQLiteDB;
 public class CreacionPartida extends AppCompatActivity {
 
     private CheckBox cbAmigo1, cbAmigo2, cbAmigo3, cbAmigo4;
-    private SQLiteDB helper;
-    private String _sUsuario;
-    private DatabaseReference dbref;
+    private SQLiteDB helper = new SQLiteDB(this,"db",null,1);
+    private DatabaseReference DBrefPartidas;
     private ArrayList<LV_Usuario> _dataListJugadores = new ArrayList<>();
     private ArrayList<LV_Usuario> _dataListAmigosAdd = new ArrayList<>();
     private List_Adapter_Add _adapterAmigosAdd;
     private List_Adapter_Remove _adapterAmigosRemove;
     private ListView _lvParticipantes;
     private ListView _lvAmigos;
+    private DatabaseReference DBrefUsuario;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +54,32 @@ public class CreacionPartida extends AppCompatActivity {
         _lvParticipantes = (ListView)findViewById(R.id.lvParticipantes);
 
 
-        helper = new SQLiteDB(this,"db",null,1);
-        _sUsuario = helper.GetDatoPerfil("Usuario");
+
+        DBrefUsuario = FirebaseDatabase.getInstance().getReference().child("Usuarios");
+        DBrefUsuario.child(helper.GetUser()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot Nodos) {
+                for(DataSnapshot nodo: Nodos.getChildren()){
+                    switch (nodo.getKey()){
+                        case "Amigos":
+                            for(DataSnapshot amigo: nodo.getChildren()){
+                                _dataListAmigosAdd.add(new LV_Usuario(amigo.getValue().toString()));
+                            }
+                            _adapterAmigosAdd = new List_Adapter_Add(CreacionPartida.this,R.layout.item_row_participante_add,_dataListAmigosAdd);
+                            _adapterAmigosAdd.setNotifyOnChange(true);
+                            _lvAmigos.setAdapter(_adapterAmigosAdd);
+                            break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
         Cursor _cAmigos = helper.ConsultarAmigos();
         if(_cAmigos.moveToFirst()){
             do{
@@ -62,9 +89,7 @@ public class CreacionPartida extends AppCompatActivity {
         }
 
 
-        _adapterAmigosAdd = new List_Adapter_Add(CreacionPartida.this,R.layout.item_row_participante_add,_dataListAmigosAdd);
-        _adapterAmigosAdd.setNotifyOnChange(true);
-        _lvAmigos.setAdapter(_adapterAmigosAdd);
+
 
 
 
@@ -78,7 +103,7 @@ public class CreacionPartida extends AppCompatActivity {
     public void ConfirmarPartida(View view){
 
         ArrayList<String> Secuencia = new ArrayList<>();
-        _dataListJugadores.add(new LV_Usuario(_sUsuario));
+        _dataListJugadores.add(new LV_Usuario(helper.GetUser()));
 
 
         for (int i = 0; i < 4; i++) {
@@ -98,52 +123,42 @@ public class CreacionPartida extends AppCompatActivity {
         }
         CrearPartida Partida = new CrearPartida();
 
-        ArrayList<String> Jugadores = new ArrayList<>();
+        ArrayList<Jugador> Jugadores = new ArrayList<>();
         for(LV_Usuario jugador: _dataListJugadores){
-            Jugadores.add(jugador.getSolicitud_usuario());
+            if(jugador.getSolicitud_usuario().equals(helper.GetUser())){
+                Jugadores.add(new Jugador(jugador.getSolicitud_usuario(),1));
+            }
+            else{
+                Jugadores.add(new Jugador(jugador.getSolicitud_usuario(),0));
+            }
+
         }
         Partida.setCantidadJugadores(_dataListJugadores.size());
         Partida.setJugadores(Jugadores);
-        Partida.setProximoJugador(_sUsuario);
+        Partida.setProximoJugador(helper.GetUser());
         Partida.setSecuencia(Secuencia);
         Partida.setID(Partida.GenerarIDPartida(_dataListJugadores.toString() + Secuencia.toString() + (int) (Math.random() * 999999)));
         Partida.setEstado(1);
-        Partida.setAnfitrion(_sUsuario);
+        Partida.setAnfitrion(helper.GetUser());
 
-        dbref = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(_sUsuario);
+        DBrefPartidas = FirebaseDatabase.getInstance().getReference().child("Partidas");
 
         try{
             //Creando partida en Firebase
-            dbref.child("Partidas").child(Partida.getID()).setValue(Partida);
+            DBrefPartidas.child(Partida.getID()).setValue(Partida);
             //Creando partida en DB3
-            helper = new SQLiteDB(this,"db",null,1);
-            helper.CrearPartida(Partida.getID(),Partida.getCantidadJugadores(),1,1,_sUsuario);
-            CrearPartida SolicitudPartida = new CrearPartida();
-            for(final String amigo: Partida.getJugadores()){
 
-                if(amigo.equals(_sUsuario)){
+            // Enviando la solicitud de partida a todos los participantes
+            for(LV_Usuario participante : _dataListJugadores){
+                if(participante.getSolicitud_usuario().equals(helper.GetUser())){
+                    DBrefUsuario.child(helper.GetUser()).child("Partidas").push().setValue(Partida.getID());
                     continue;
                 }
-                DatabaseReference dbrefAmigo = FirebaseDatabase.getInstance().getReference();
-                // Llenando tabla PartidaxAmigos
-                helper.CrearRelacionPartidaAmigos(Partida.getID(),amigo);
-                // Por cada participante de la partida
-                // Utilizo la clase matches para crear solicitud de partida ya que el
-                // objeto tiene la estrutura de la tabla Partidas en la db3
-                SolicitudPartida.setID(Partida.getID());
-                SolicitudPartida.setCantidadJugadores(Partida.getCantidadJugadores());
-                SolicitudPartida.setJugadores(Partida.getJugadores());
-                SolicitudPartida.setSecuencia(Partida.getSecuencia());
-                SolicitudPartida.setProximoJugador(_sUsuario);
-                SolicitudPartida.setEstado(0);
-                SolicitudPartida.setAnfitrion(_sUsuario);
+                SolicitudPartida solicitudPartida = new SolicitudPartida(Partida.getID(),_dataListJugadores,Partida.getAnfitrion());
 
-                dbrefAmigo.child("Usuarios").child(amigo).child("Partidas").child(SolicitudPartida.getID()).setValue(SolicitudPartida);
+                DBrefUsuario.child(participante.getSolicitud_usuario()).child("SolicitudesPartidas").push().setValue(solicitudPartida);
             }
-            // Subiendo DB3
-            helper.PushDB();
-            helper.close();
-            dbref = null;
+
 
             Toast.makeText(this,"Partida creada con éxito",Toast.LENGTH_SHORT).show();
 

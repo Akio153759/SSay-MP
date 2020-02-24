@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tamadev.ssay_mp.classes.LV_Usuario;
+import com.tamadev.ssay_mp.classes.UsuarioEnFirebase;
 import com.tamadev.ssay_mp.utils.AlertDialogSearchUser;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class AmigosActivity extends AppCompatActivity {
     private DatabaseReference dbref;
     private String _sUsuarioAgregar, _sNombreAgregar;
     private List_Adapter _lSolicitudesAdapter;
-    private ArrayList<LV_Usuario> _lSolicitudes;
+    private ArrayList<UsuarioEnFirebase> _lSolicitudes;
     private ArrayList<String> _lAmigos;
     private ArrayAdapter<String> _lamigosAdapter;
     private DatabaseReference DBrefUsuario ;
@@ -58,7 +59,7 @@ public class AmigosActivity extends AppCompatActivity {
 
 
         _lAmigos = new ArrayList<>();
-        _lamigosAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item, _lAmigos);
+        _lamigosAdapter = new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, _lAmigos);
         _lamigosAdapter.setNotifyOnChange(true);
         lvAmigos.setAdapter(_lamigosAdapter);
 
@@ -78,26 +79,30 @@ public class AmigosActivity extends AppCompatActivity {
         DBrefUsuario.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot Nodos) {
+                _lSolicitudes.clear();
+                _lAmigos.clear();
                 for(DataSnapshot nodo: Nodos.getChildren()){
                     switch (nodo.getKey()){
-                        case "Solicitudes":
-                            _lSolicitudes.clear();
+                        case "SolicitudesAmistad":
+
                             for(DataSnapshot solicitud: nodo.getChildren()){
 
-                                _lSolicitudes.add(new LV_Usuario(solicitud.getValue().toString()));
+                                _lSolicitudes.add(new UsuarioEnFirebase(solicitud.getKey(),solicitud.getValue().toString()));
                             }
-                                _lSolicitudesAdapter.notifyDataSetChanged();
+
                             break;
                         case "Amigos":
-                            _lAmigos.clear();
+
                             for(DataSnapshot amigo: nodo.getChildren()) {
 
                                 _lAmigos.add(amigo.getValue().toString());
                             }
-                            _lamigosAdapter.notifyDataSetChanged();
+
                             break;
                     }
                 }
+                _lSolicitudesAdapter.notifyDataSetChanged();
+                _lamigosAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -226,13 +231,13 @@ public class AmigosActivity extends AppCompatActivity {
     }
 */
 
-    private class List_Adapter extends ArrayAdapter<LV_Usuario> {
+    private class List_Adapter extends ArrayAdapter<UsuarioEnFirebase> {
 
-        private List<LV_Usuario> mList;
+        private List<UsuarioEnFirebase> mList;
         private Context mContext;
         private int resourceLayout;
-        SQLiteDB helper;
-        public List_Adapter(@NonNull Context context, int resource, @NonNull List<LV_Usuario> objects) {
+
+        public List_Adapter(@NonNull Context context, int resource, @NonNull List<UsuarioEnFirebase> objects) {
             super(context, resource, objects);
             this.mList = objects;
             this.mContext = context;
@@ -247,10 +252,10 @@ public class AmigosActivity extends AppCompatActivity {
             if(view == null){
                 view = LayoutInflater.from(mContext).inflate(resourceLayout,null);
             }
-            final LV_Usuario modelo = mList.get(position);
+            final UsuarioEnFirebase modelo = mList.get(position);
 
             TextView tvUsuarioSolicitud = view.findViewById(R.id.tvUsuarioSolicitud);
-            tvUsuarioSolicitud.setText(modelo.getSolicitud_usuario());
+            tvUsuarioSolicitud.setText(modelo.getUsuario());
 
             Button btnAceptarSolicitud = view.findViewById(R.id.btnAceptarSolicitud);
             Button btnRechazarSolicitd = view.findViewById(R.id.btnRechazarSolicitud);
@@ -263,15 +268,17 @@ public class AmigosActivity extends AppCompatActivity {
             btnAceptarSolicitud.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DBrefUsuario.child("Amigos").push().setValue(modelo.getSolicitud_usuario());
-                    DBrefUsuario.child("Solicitudes").removeValue().equals(modelo.getSolicitud_usuario());
+                    DBrefUsuario.child("Amigos").push().setValue(modelo.getUsuario());
+                    DatabaseReference DBrefAmigo = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(modelo.getUsuario()).child("Amigos");
+                    DBrefAmigo.push().setValue(helper.GetUser());
+                    DBrefUsuario.child("SolicitudesAmistad").child(modelo.getId()).removeValue();
                 }
             });
 
             btnRechazarSolicitd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DBrefUsuario.child("Solicitudes").removeValue().equals(modelo.getSolicitud_usuario());
+                    DBrefUsuario.child("SolicitudesAmistad").child(modelo.getId()).removeValue();
                 }
             });
 

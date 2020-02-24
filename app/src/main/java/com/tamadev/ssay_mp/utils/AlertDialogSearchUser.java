@@ -85,7 +85,7 @@ public class AlertDialogSearchUser{
             public void onClick(View v) {
                 SQLiteDB helper = new SQLiteDB(context,"db",null,1);
                 DatabaseReference DBrefUserAdd = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(_sUser);
-                DBrefUserAdd.child("Solicitudes").push().setValue(helper.GetUser());
+                DBrefUserAdd.child("SolicitudesAmistad").push().setValue(helper.GetUser());
                 Toast.makeText(context,"Solicitud de amistad enviada a " + _sUser,Toast.LENGTH_SHORT).show();
                 ibtnAdd.setVisibility(View.INVISIBLE);
             }

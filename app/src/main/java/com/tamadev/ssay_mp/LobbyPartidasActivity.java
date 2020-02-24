@@ -6,12 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,7 +21,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tamadev.ssay_mp.classes.CrearPartida;
-import com.tamadev.ssay_mp.classes.LV_Partidas;
+import com.tamadev.ssay_mp.classes.Jugador;
+import com.tamadev.ssay_mp.classes.LV_Usuario;
+import com.tamadev.ssay_mp.classes.SolicitudPartida;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +32,17 @@ import database.SQLiteDB;
 
 public class LobbyPartidasActivity extends AppCompatActivity {
 
-    private ListView _lvPartidas;
-    private ArrayList<LV_Partidas> _dataListPartidas = new ArrayList<>();
+    private ListView _lvPartidas, _lvSolicitudesPartidas;
+    private ArrayList<CrearPartida> _dataListPartidas = new ArrayList<>();
+    private ArrayList<SolicitudPartida> _dataListSolicitudes= new ArrayList<>();
+    private ArrayList<SolicitudPartida> _listaSolicitudPartidas = new ArrayList<>();
     private List_Adapter _adapterPartidas;
-    private SQLiteDB helper;
-    private DatabaseReference dbref;
+    private List_Adapter_Solicitudes _adapterSolicitudes;
+    private SQLiteDB helper = new SQLiteDB(LobbyPartidasActivity.this,"db",null,1);
+
+    private DatabaseReference DBrefUsuario;
+
+
 
 
     @Override
@@ -48,8 +56,56 @@ public class LobbyPartidasActivity extends AppCompatActivity {
 
         _lvPartidas.setAdapter(_adapterPartidas);
 
-        SearchPartidass();
+
+        _lvSolicitudesPartidas = (ListView)findViewById(R.id.lvSolicPartidas);
+        _adapterSolicitudes = new List_Adapter_Solicitudes(this,R.layout.item_row_solicitud_partida,_dataListSolicitudes);
+        _adapterSolicitudes.setNotifyOnChange(true);
+
+        _lvSolicitudesPartidas.setAdapter(_adapterSolicitudes);
+
+        DBrefUsuario = FirebaseDatabase.getInstance().getReference();
+        DBrefUsuario.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot NodosPrincipal) {
+                _dataListPartidas.clear();
+                _dataListSolicitudes.clear();
+                for(DataSnapshot nodo: NodosPrincipal.child("Usuarios").child(helper.GetUser()).getChildren()){
+                    switch (nodo.getKey()){
+                        case "SolicitudesPartidas":
+                            for(DataSnapshot partida: nodo.getChildren()){
+                                ArrayList<LV_Usuario> jugadores = new ArrayList<>();
+                                for(DataSnapshot jugador: nodo.child(partida.getKey()).child("jugadores").getChildren()){
+                                    jugadores.add(new LV_Usuario(jugador.getValue().toString()));
+                                }
+                                SolicitudPartida sp = new SolicitudPartida(partida.getKey(),nodo.child(partida.getKey()).child("idPartida").getValue().toString(),jugadores,nodo.child(partida.getKey()).child("anfitrion").getValue().toString());
+                                _dataListSolicitudes.add(sp);
+                            }
+
+                            break;
+                        case "Partidas":
+                            for(DataSnapshot partida: nodo.getChildren()){
+                                _dataListPartidas.add(NodosPrincipal.child("Partidas").child(partida.getValue().toString()).getValue(CrearPartida.class));
+
+                            }
+                            break;
+                    }
+                }
+                _adapterPartidas.notifyDataSetChanged();
+                _adapterSolicitudes.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
     }
+    /*
     public void SearchPartidass(){
         helper = new SQLiteDB(LobbyPartidasActivity.this,"db",null,1);
         dbref = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(helper.GetDatoPerfil("Usuario")).child("Partidas");
@@ -90,7 +146,8 @@ public class LobbyPartidasActivity extends AppCompatActivity {
 
             }
         });
-    }
+    }*/
+    /*
     public void SearchPartidas(){
         helper = new SQLiteDB(LobbyPartidasActivity.this,"db",null,1);
         Cursor _cPartidas = helper.ConsultarPartidas();
@@ -141,7 +198,7 @@ public class LobbyPartidasActivity extends AppCompatActivity {
 
         _adapterPartidas = new List_Adapter(LobbyPartidasActivity.this,R.layout.item_row_partidas,_dataListPartidas);
         _lvPartidas.setAdapter(_adapterPartidas);
-    }
+    }*/
 
     public void CrearPartidaNueva(View view){
         Intent i = new Intent(LobbyPartidasActivity.this,CreacionPartida.class);
@@ -149,13 +206,13 @@ public class LobbyPartidasActivity extends AppCompatActivity {
         finish();
     }
 
-    private class List_Adapter extends ArrayAdapter<LV_Partidas> {
+    private class List_Adapter extends ArrayAdapter<CrearPartida> {
 
-        private List<LV_Partidas> mList;
+        private List<CrearPartida> mList;
         private Context mContext;
         private int resourceLayout;
 
-        public List_Adapter(@NonNull Context context, int resource, @NonNull List<LV_Partidas> objects) {
+        public List_Adapter(@NonNull Context context, int resource, @NonNull List<CrearPartida> objects) {
             super(context, resource, objects);
             this.mList = objects;
             this.mContext = context;
@@ -170,14 +227,107 @@ public class LobbyPartidasActivity extends AppCompatActivity {
             if(view == null){
                 view = LayoutInflater.from(mContext).inflate(resourceLayout,null);
             }
-            final LV_Partidas modelo = mList.get(position);
+            final CrearPartida modelo = mList.get(position);
+            String _sEstado = "";
+            String _sParticipantes = "";
+            for(Jugador jugador: modelo.getJugadores()){
+                _sParticipantes += jugador.getUser() + ", ";
+                if(jugador.getUser().equals(helper.GetUser())){
+                    if (jugador.getEstado()==1){
+                        _sEstado = "Esperando el turno";
+                    }
+                    else if(jugador.getEstado()==3){
+                        _sEstado = "Has perdido la partida";
+                    }
+                    else if(jugador.getEstado()==4){
+                        _sEstado = "Has ganado la partida";
+                    }
+
+                }
+            }
+            if(modelo.getProximoJugador().equals(helper.GetUser())){
+                _sEstado = "Tu turno";
+            }
 
             TextView tvPartidaCon = view.findViewById(R.id.tvPartidaCon);
             TextView tvIntegrantes = view.findViewById(R.id.tvIntegrantes);
             TextView tvEstado = view.findViewById(R.id.tvEstado);
-            tvPartidaCon.setText("Partida de "+ modelo.get_sPartidaCon());
-            tvEstado.setText(modelo.get_sEstado());
-            tvIntegrantes.setText("Participantes: " + modelo.get_sParticipantes().replace("[","").replace("]",""));
+            tvPartidaCon.setText("Partida de "+ modelo.getAnfitrion());
+            tvEstado.setText(_sEstado);
+            tvIntegrantes.setText("Participantes: " + _sParticipantes.substring(0,_sParticipantes.length()-2));
+
+            return view;
+        }
+    }
+
+    private class List_Adapter_Solicitudes extends ArrayAdapter<SolicitudPartida> {
+
+        private List<SolicitudPartida> mList;
+        private Context mContext;
+        private int resourceLayout;
+
+        public List_Adapter_Solicitudes(@NonNull Context context, int resource, @NonNull List<SolicitudPartida> objects) {
+            super(context, resource, objects);
+            this.mList = objects;
+            this.mContext = context;
+            this.resourceLayout = resource;
+
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View view = convertView;
+            if(view == null){
+                view = LayoutInflater.from(mContext).inflate(resourceLayout,null);
+            }
+            final SolicitudPartida modelo = mList.get(position);
+
+            String _sParticipantes = "";
+            for(LV_Usuario jugador: modelo.getJugadores()){
+                _sParticipantes += jugador.getSolicitud_usuario().replace("{solicitud_usuario=","").replace("}","") + ", ";
+            }
+
+            TextView tvPartidaDe = view.findViewById(R.id.tvInvitador);
+            TextView tvIntegrantes = view.findViewById(R.id.tvPart);
+            Button btnPos = view.findViewById(R.id.btnPos);
+            Button btnNeg = view.findViewById(R.id.btnNegat);
+
+            btnPos.setBackgroundResource(R.drawable.btnconfirmar);
+            btnNeg.setBackgroundResource(R.drawable.btncancelar);
+            tvPartidaDe.setText("Partida de "+ modelo.getAnfitrion());
+
+            tvIntegrantes.setText("Participantes: " + _sParticipantes.substring(0,_sParticipantes.length()-2));
+
+            btnPos.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DBrefUsuario.child("Usuarios").child(helper.GetUser()).child("Partidas").push().setValue(modelo.getIdPartida());
+                    DBrefUsuario.child("Usuarios").child(helper.GetUser()).child("SolicitudesPartidas").child(modelo.getId()).removeValue();
+                    for(int i = 0; i<modelo.getJugadores().size();i++)
+                    {
+                        if (modelo.getJugadores().get(i).getSolicitud_usuario().contains(helper.GetUser())){
+                            DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("jugadores").child(String.valueOf(i)).child("estado").setValue(1);
+                            break;
+                        }
+                    }
+
+                }
+            });
+
+            btnNeg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DBrefUsuario.child("Usuarios").child(helper.GetUser()).child("SolicitudesPartidas").child(modelo.getId()).removeValue();
+                    for(int i = 0; i<modelo.getJugadores().size();i++)
+                    {
+                        if (modelo.getJugadores().get(i).getSolicitud_usuario().contains(helper.GetUser())){
+                            DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("jugadores").child(String.valueOf(i)).child("estado").setValue(2);
+                            break;
+                        }
+                    }
+                }
+            });
 
             return view;
         }

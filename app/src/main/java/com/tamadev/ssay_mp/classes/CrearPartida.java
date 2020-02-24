@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class CrearPartida {
     private int cantidadJugadores;
-    private ArrayList<String> jugadores;
+    private ArrayList<Jugador> jugadores;
     private ArrayList <String> secuencia;
     private String proximoJugador;
     private String id;
@@ -17,6 +17,7 @@ public class CrearPartida {
     public int getEstado() {
         return Estado;
     }
+
 
     public void setEstado(int estado) {
         Estado = estado;
@@ -43,11 +44,11 @@ public class CrearPartida {
         this.cantidadJugadores = cantidadJugadores;
     }
 
-    public ArrayList<String> getJugadores() {
+    public ArrayList<Jugador> getJugadores() {
         return jugadores;
     }
 
-    public void setJugadores(ArrayList<String> jugadores) {
+    public void setJugadores(ArrayList<Jugador> jugadores) {
         this.jugadores = jugadores;
     }
 
