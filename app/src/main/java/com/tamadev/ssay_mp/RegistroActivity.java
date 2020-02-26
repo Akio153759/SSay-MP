@@ -68,6 +68,12 @@ public class RegistroActivity extends AppCompatActivity {
             Toast.makeText(this,"Las contraseñas no coinciden",Toast.LENGTH_SHORT).show();
             return;
         }
+        if(sUsuario.length()>14 || sUsuario.length()<4){
+            Toast.makeText(this,"El usuario debe contener entre 4 y 14 caracteres",Toast.LENGTH_SHORT).show();
+        }
+        if(!sEmail.contains("@")){
+            Toast.makeText(this,"Ingrese una dirección de correo válida",Toast.LENGTH_SHORT).show();
+        }
         dbref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

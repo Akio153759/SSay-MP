@@ -50,7 +50,8 @@
             android:ems="10"
             android:gravity="center"
             android:hint="Ingrese nombre de usuario"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:maxLength="14" />
 
         <TextView
             android:id="@+id/tvEmail"

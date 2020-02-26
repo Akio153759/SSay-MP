@@ -10,10 +10,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -101,7 +103,28 @@ public class LobbyPartidasActivity extends AppCompatActivity {
         });
 
 
-
+        _lvPartidas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TextView tvEstado = view.findViewById(R.id.tvEstado);
+                if (tvEstado.getText().toString().equals("Tu turno")){
+                    Toast.makeText(LobbyPartidasActivity.this,"Jugando",Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(LobbyPartidasActivity.this,MainActivity.class);
+                    i.putExtra("IDPartida",_dataListPartidas.get(position).getID());
+                    startActivity(i);
+                    finish();
+                }
+                else if(tvEstado.getText().toString().equals("Esperando el turno")){
+                    Toast.makeText(LobbyPartidasActivity.this,"Espera tu turno",Toast.LENGTH_SHORT).show();
+                }
+                else if(tvEstado.getText().toString().equals("Has perdido la partida")){
+                    Toast.makeText(LobbyPartidasActivity.this,"Has quedado fuera de esta partida",Toast.LENGTH_SHORT).show();
+                }
+                else if(tvEstado.getText().toString().equals("Has ganado la partida")){
+                    Toast.makeText(LobbyPartidasActivity.this,"La partida ya ha sido finalizada", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
 
     }
@@ -230,6 +253,7 @@ public class LobbyPartidasActivity extends AppCompatActivity {
             final CrearPartida modelo = mList.get(position);
             String _sEstado = "";
             String _sParticipantes = "";
+            boolean _bPartidaFinalizada = false;
             for(Jugador jugador: modelo.getJugadores()){
                 _sParticipantes += jugador.getUser() + ", ";
                 if(jugador.getUser().equals(helper.GetUser())){
@@ -238,14 +262,16 @@ public class LobbyPartidasActivity extends AppCompatActivity {
                     }
                     else if(jugador.getEstado()==3){
                         _sEstado = "Has perdido la partida";
+                        _bPartidaFinalizada = true;
                     }
                     else if(jugador.getEstado()==4){
                         _sEstado = "Has ganado la partida";
+                        _bPartidaFinalizada = true;
                     }
 
                 }
             }
-            if(modelo.getProximoJugador().equals(helper.GetUser())){
+            if(modelo.getProximoJugador().equals(helper.GetUser()) && !_bPartidaFinalizada){
                 _sEstado = "Tu turno";
             }
 
@@ -276,7 +302,7 @@ public class LobbyPartidasActivity extends AppCompatActivity {
 
         @NonNull
         @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             View view = convertView;
             if(view == null){
                 view = LayoutInflater.from(mContext).inflate(resourceLayout,null);
@@ -306,8 +332,9 @@ public class LobbyPartidasActivity extends AppCompatActivity {
                     DBrefUsuario.child("Usuarios").child(helper.GetUser()).child("SolicitudesPartidas").child(modelo.getId()).removeValue();
                     for(int i = 0; i<modelo.getJugadores().size();i++)
                     {
-                        if (modelo.getJugadores().get(i).getSolicitud_usuario().contains(helper.GetUser())){
+                        if (modelo.getJugadores().get(i).getSolicitud_usuario().replace("{solicitud_usuario=","").replace("}","").equals(helper.GetUser())){
                             DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("jugadores").child(String.valueOf(i)).child("estado").setValue(1);
+
                             break;
                         }
                     }
@@ -321,9 +348,25 @@ public class LobbyPartidasActivity extends AppCompatActivity {
                     DBrefUsuario.child("Usuarios").child(helper.GetUser()).child("SolicitudesPartidas").child(modelo.getId()).removeValue();
                     for(int i = 0; i<modelo.getJugadores().size();i++)
                     {
-                        if (modelo.getJugadores().get(i).getSolicitud_usuario().contains(helper.GetUser())){
+                        if (modelo.getJugadores().get(i).getSolicitud_usuario().replace("{solicitud_usuario=","").replace("}","").equals(helper.GetUser())){
                             DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("jugadores").child(String.valueOf(i)).child("estado").setValue(2);
-                            break;
+                            int pasarTurno = i;
+                            while (pasarTurno < modelo.getJugadores().size() - 1){
+                                pasarTurno++;
+                                if(_dataListPartidas.get(position).getJugadores().get(pasarTurno).getEstado()==0 ||_dataListPartidas.get(position).getJugadores().get(pasarTurno).getEstado()==1){
+                                    DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("proximoJugador").setValue(_dataListPartidas.get(position).getJugadores().get(pasarTurno).getUser());
+                                    return;
+                                }
+                            }
+                            pasarTurno = 0;
+                            while (pasarTurno != i){
+                                pasarTurno++;
+                                if(_dataListPartidas.get(position).getJugadores().get(pasarTurno).getEstado()==0 ||_dataListPartidas.get(position).getJugadores().get(pasarTurno).getEstado()==1){
+                                    DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("proximoJugador").setValue(_dataListPartidas.get(position).getJugadores().get(pasarTurno).getUser());
+                                    return;
+                                }
+                            }
+
                         }
                     }
                 }

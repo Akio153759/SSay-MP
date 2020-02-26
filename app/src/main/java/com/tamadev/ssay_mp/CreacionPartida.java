@@ -170,7 +170,7 @@ public class CreacionPartida extends AppCompatActivity {
 
 
 
-        Intent i = new Intent(this, MenuPrincipalActivity.class);
+        Intent i = new Intent(this, LobbyPartidasActivity.class);
         startActivity(i);
         finish();
     }
