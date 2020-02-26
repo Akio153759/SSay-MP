@@ -37,7 +37,7 @@ public class LobbyPartidasActivity extends AppCompatActivity {
     private ListView _lvPartidas, _lvSolicitudesPartidas;
     private ArrayList<CrearPartida> _dataListPartidas = new ArrayList<>();
     private ArrayList<SolicitudPartida> _dataListSolicitudes= new ArrayList<>();
-    private ArrayList<SolicitudPartida> _listaSolicitudPartidas = new ArrayList<>();
+    private ArrayList<CrearPartida> _listaSolicitudPartidas = new ArrayList<>();
     private List_Adapter _adapterPartidas;
     private List_Adapter_Solicitudes _adapterSolicitudes;
     private SQLiteDB helper = new SQLiteDB(LobbyPartidasActivity.this,"db",null,1);
@@ -81,6 +81,7 @@ public class LobbyPartidasActivity extends AppCompatActivity {
                                 }
                                 SolicitudPartida sp = new SolicitudPartida(partida.getKey(),nodo.child(partida.getKey()).child("idPartida").getValue().toString(),jugadores,nodo.child(partida.getKey()).child("anfitrion").getValue().toString());
                                 _dataListSolicitudes.add(sp);
+                                _listaSolicitudPartidas.add(NodosPrincipal.child("Partidas").child(sp.getIdPartida()).getValue(CrearPartida.class));
                             }
 
                             break;
@@ -350,20 +351,23 @@ public class LobbyPartidasActivity extends AppCompatActivity {
                     {
                         if (modelo.getJugadores().get(i).getSolicitud_usuario().replace("{solicitud_usuario=","").replace("}","").equals(helper.GetUser())){
                             DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("jugadores").child(String.valueOf(i)).child("estado").setValue(2);
-                            int pasarTurno = i;
-                            while (pasarTurno < modelo.getJugadores().size() - 1){
-                                pasarTurno++;
-                                if(_dataListPartidas.get(position).getJugadores().get(pasarTurno).getEstado()==0 ||_dataListPartidas.get(position).getJugadores().get(pasarTurno).getEstado()==1){
-                                    DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("proximoJugador").setValue(_dataListPartidas.get(position).getJugadores().get(pasarTurno).getUser());
-                                    return;
+                            if(_listaSolicitudPartidas.get(position).getProximoJugador().equals(helper.GetUser())) {
+                                int pasarTurno = i;
+
+                                while (pasarTurno < modelo.getJugadores().size() - 1) {
+                                    pasarTurno++;
+                                    if (_listaSolicitudPartidas.get(position).getJugadores().get(pasarTurno).getEstado() == 0 || _listaSolicitudPartidas.get(position).getJugadores().get(pasarTurno).getEstado() == 1) {
+                                        DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("proximoJugador").setValue(_listaSolicitudPartidas.get(position).getJugadores().get(pasarTurno).getUser());
+                                        return;
+                                    }
                                 }
-                            }
-                            pasarTurno = 0;
-                            while (pasarTurno != i){
-                                pasarTurno++;
-                                if(_dataListPartidas.get(position).getJugadores().get(pasarTurno).getEstado()==0 ||_dataListPartidas.get(position).getJugadores().get(pasarTurno).getEstado()==1){
-                                    DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("proximoJugador").setValue(_dataListPartidas.get(position).getJugadores().get(pasarTurno).getUser());
-                                    return;
+                                pasarTurno = 0;
+                                while (pasarTurno != i) {
+                                    pasarTurno++;
+                                    if (_dataListPartidas.get(position).getJugadores().get(pasarTurno).getEstado() == 0 || _dataListPartidas.get(position).getJugadores().get(pasarTurno).getEstado() == 1) {
+                                        DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("proximoJugador").setValue(_dataListPartidas.get(position).getJugadores().get(pasarTurno).getUser());
+                                        return;
+                                    }
                                 }
                             }
 
