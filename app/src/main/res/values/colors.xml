@@ -3,4 +3,12 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="btn_verde_notpress">#137200</color>
+    <color name="btn_verde_press">#27D404</color>
+    <color name="btn_amarillo_notpress">#584C00</color>
+    <color name="btn_amarillo_press">#C1A600</color>
+    <color name="btn_azul_notpress">#00505E</color>
+    <color name="btn_azul_press">#00A1BD</color>
+    <color name="btn_rojo_notpress">#770000</color>
+    <color name="btn_rojo_press">#DC0000</color>
 </resources>

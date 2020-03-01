@@ -3,9 +3,14 @@ package com.tamadev.ssay_mp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -17,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tamadev.ssay_mp.classes.CrearPartida;
 import com.tamadev.ssay_mp.utils.AlertDialogTwoButtons;
+import com.tamadev.ssay_mp.utils.AnimatorController;
 
 import java.util.ArrayList;
 
@@ -39,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
     private int _iPositionInListaJugadores;
 
     private SQLiteDB helper = new SQLiteDB(MainActivity.this,"db",null,1);
+    private long intervaloMuestraSecuencia = 800;
+
+    private MediaPlayer btnVerdeSound, btnAmarilloSound, btnAzulSound, btnRojoSound;
 
 
     @Override
@@ -47,6 +56,11 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
         Bundle extras = getIntent().getExtras();
         _sIDPartida = extras.getString("IDPartida");
         setContentView(R.layout.activity_main);
+
+        btnVerdeSound = MediaPlayer.create(MainActivity.this,R.raw.btnverde);
+        btnAmarilloSound = MediaPlayer.create(MainActivity.this,R.raw.btnamarillo);
+        btnAzulSound = MediaPlayer.create(MainActivity.this,R.raw.btnazul);
+        btnRojoSound = MediaPlayer.create(MainActivity.this,R.raw.btnrojo);
 
         btnTop = (Button)findViewById(R.id.btnTop);
         btnLeft = (Button)findViewById(R.id.btnLeft);
@@ -83,7 +97,15 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
 
     }
     public void Play(){
+        btnTop.setEnabled(false);
+        btnLeft.setEnabled(false);
+        btnBottom.setEnabled(false);
+        btnRight.setEnabled(false);
         MostraSecuencia();
+        btnTop.setEnabled(true);
+        btnLeft.setEnabled(true);
+        btnBottom.setEnabled(true);
+        btnRight.setEnabled(true);
         _bPlayMode = true;
 
 
@@ -103,67 +125,122 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
 
 
     public void MostraSecuencia() {
-        Toast.makeText(this, "Comienza a jugar", Toast.LENGTH_LONG).show();
 
-        for (final String btn : Secuencia) {
-            Thread x = new Thread();
-            try{
+        for (int i = 0; i < Secuencia.size(); i++) {
+            String btn = Secuencia.get(i);
+                    switch (btn){
+                        case "t":
+                            //Presionando
+                            btnTop.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btnTop.setBackgroundColor(Color.parseColor("#27D404"));
+                                    if (btnVerdeSound.isPlaying()){
+                                        btnVerdeSound.stop();
+                                        btnVerdeSound.release();
+                                        btnVerdeSound = MediaPlayer.create(MainActivity.this,R.raw.btnverde);
+                                    }
+                                    btnVerdeSound.start();
+                                }
+                            },intervaloMuestraSecuencia*i);
+                            //Soltando
+                            btnTop.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btnTop.setBackgroundResource(R.drawable.efecto_boton_verde);
+                                }
+                            },intervaloMuestraSecuencia*i + 400);
+                            break;
 
-                x.sleep(1000);
-            }
-            catch (InterruptedException e){
-                e.printStackTrace();
-            }
-            switch (btn){
-                case "t":
-                    CambiarAspectoBtn(btnTop,"#8EFF89","presiona el verde");
-                    Thread t = new Thread();
-                    try{
-                        t.sleep(1000);
-                    }catch (InterruptedException e){
-                        e.printStackTrace();
+                        case "l":
+                            //Presionando
+                            btnLeft.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btnLeft.setBackgroundColor(Color.parseColor("#C1A600"));
+                                    if(btnAmarilloSound.isPlaying()){
+                                        btnAmarilloSound.stop();
+                                        btnAmarilloSound.release();
+                                        btnAmarilloSound= MediaPlayer.create(MainActivity.this,R.raw.btnamarillo);
+                                    }
+                                    btnAmarilloSound.start();
+                                }
+                            },intervaloMuestraSecuencia*i);
+                            //Soltando
+                            btnLeft.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btnLeft.setBackgroundResource(R.drawable.efecto_boton_amarillo);
+                                }
+                            },intervaloMuestraSecuencia*i + 400);
+
+                            break;
+
+                        case "b":
+                            //Presionando
+                            btnBottom.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btnBottom.setBackgroundColor(Color.parseColor("#00A1BD"));
+                                    if(btnAzulSound.isPlaying()){
+                                        btnAzulSound.stop();
+                                        btnAzulSound.release();
+                                        btnAzulSound = MediaPlayer.create(MainActivity.this,R.raw.btnazul);
+                                    }
+                                    btnAzulSound.start();
+                                }
+                            },intervaloMuestraSecuencia*i);
+                            //Soltando
+                            btnBottom.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btnBottom.setBackgroundResource(R.drawable.efecto_boton_azul);
+                                }
+                            },intervaloMuestraSecuencia*i + 400);
+
+
+                            break;
+
+                        case "r":
+                            //Presionando
+                            btnRight.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btnRight.setBackgroundColor(Color.parseColor("#DC0000"));
+                                    if(btnRojoSound.isPlaying()){
+                                        btnRojoSound.stop();
+                                        btnRojoSound.release();
+                                        btnRojoSound = MediaPlayer.create(MainActivity.this,R.raw.btnrojo);
+                                    }
+                                    btnRojoSound.start();
+                                }
+                            },intervaloMuestraSecuencia*i);
+                            //Soltando
+                            btnRight.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btnRight.setBackgroundResource(R.drawable.efecto_boton_rojo);
+                                }
+                            },intervaloMuestraSecuencia*i + 400);
+
+                            break;
+
                     }
-                    CambiarAspectoBtn(btnTop,"#137200","suelta el verde");
-                    break;
 
-                case "l":
-                    CambiarAspectoBtn(btnLeft,"#FFFF89","presiona el amarillo");
-                    Thread l = new Thread();
-                    try{
-                        l.sleep(1000);
-                    }catch (InterruptedException e){
-                        e.printStackTrace();
-                    }
-                    CambiarAspectoBtn(btnLeft,"#584C00","suelta el amarillo");
-                    break;
 
-                case "b":
-                    CambiarAspectoBtn(btnBottom,"#ADFFF8","presiona el azul");
-                    Thread b = new Thread();
-                    try{
-                        b.sleep(1000);
-                    }catch (InterruptedException e){
-                        e.printStackTrace();
-                    }
-                    CambiarAspectoBtn(btnBottom,"#00505E","suelta el azul");
-                    break;
 
-                case "r":
-                    CambiarAspectoBtn(btnRight,"#FFADAD","presiona el rojo");
-                    Thread r = new Thread();
-                    try{
-                        r.sleep(1000);
-                    }catch (InterruptedException e){
-                        e.printStackTrace();
-                    }
-                    CambiarAspectoBtn(btnRight,"#770000","suelta el rojo");
-                    break;
 
-            }
         }
+        Toast.makeText(this, "Comienza a jugar", Toast.LENGTH_LONG).show();
     }
 
     public void pressBtnTop(View view){
+        if(btnVerdeSound.isPlaying()){
+            btnVerdeSound.stop();
+            btnVerdeSound.release();
+            btnVerdeSound = MediaPlayer.create(MainActivity.this,R.raw.btnverde);
+        }
+        btnVerdeSound.start();
         if(_bPlayMode==false) {
             Secuencia.add("t");
             _iContadorSecuencia= 0;
@@ -186,6 +263,12 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
     }
 
     public void pressBtnLeft(View view){
+        if(btnAmarilloSound.isPlaying()){
+            btnAmarilloSound.stop();
+            btnAmarilloSound.release();
+            btnAmarilloSound = MediaPlayer.create(MainActivity.this,R.raw.btnamarillo);
+        }
+        btnAmarilloSound.start();
         if(_bPlayMode==false) {
             Secuencia.add("l");
             _iContadorSecuencia= 0;
@@ -207,6 +290,12 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
     }
 
     public void pressBtnBottom(View view){
+        if(btnAzulSound.isPlaying()){
+            btnAzulSound.stop();
+            btnAzulSound.release();
+            btnAzulSound = MediaPlayer.create(MainActivity.this,R.raw.btnazul);
+        }
+        btnAzulSound.start();
         if(_bPlayMode==false) {
             Secuencia.add("b");
             _iContadorSecuencia= 0;
@@ -228,6 +317,12 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
     }
 
     public void pressBtnRight(View view){
+        if(btnRojoSound.isPlaying()){
+            btnRojoSound.stop();
+            btnRojoSound.release();
+            btnRojoSound = MediaPlayer.create(MainActivity.this,R.raw.btnrojo);
+        }
+        btnRojoSound.start();
         if(_bPlayMode==false) {
             Secuencia.add("r");
             _iContadorSecuencia= 0;
@@ -286,6 +381,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                 }
                 if(_lJugadoresRestantes.size()==1){
                     DBrefPartida.child(_sIDPartida).child("jugadores").child(String.valueOf(_lJugadoresRestantes.get(0))).child("estado").setValue(4);
+                    DBrefPartida.child(_sIDPartida).child("estado").setValue(0);
                 }
                 break;
             case 1:
@@ -338,7 +434,13 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                 finish();
                 break;
             case 1:
-                Play();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Play();
+                    }
+                },2000);
+
                 break;
         }
     }

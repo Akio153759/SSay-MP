@@ -3,9 +3,12 @@ package com.tamadev.ssay_mp;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,6 +94,34 @@ public class LobbyPartidasActivity extends AppCompatActivity {
 
                             }
                             break;
+                    }
+                }
+                if(_dataListPartidas.size()>1) {
+                    int indiceA = 0;
+                    int indiceB = 1;
+                    int counter = 0;
+                    while (counter < _dataListPartidas.size()) {
+
+                        String ProxJugadorA = _dataListPartidas.get(indiceA).getProximoJugador();
+                        String ProxJugadorB = _dataListPartidas.get(indiceB).getProximoJugador();
+
+                        if (ProxJugadorB.equals(helper.GetUser()) && !ProxJugadorA.equals(helper.GetUser())) {
+                            CrearPartida auxItemDataListPartidas = _dataListPartidas.get(indiceA);
+                            CrearPartida auxItemDataListPartidasB = _dataListPartidas.get(indiceB);
+                            _dataListPartidas.remove(indiceA);
+                            _dataListPartidas.add(indiceA, auxItemDataListPartidasB);
+                            _dataListPartidas.remove(indiceB);
+                            _dataListPartidas.add(indiceB, auxItemDataListPartidas);
+
+                        }
+
+                        indiceA++;
+                        indiceB++;
+                        if (indiceB >= _dataListPartidas.size()) {
+                            counter++;
+                            indiceA = 0;
+                            indiceB = 1;
+                        }
                     }
                 }
                 _adapterPartidas.notifyDataSetChanged();
@@ -252,6 +283,7 @@ public class LobbyPartidasActivity extends AppCompatActivity {
                 view = LayoutInflater.from(mContext).inflate(resourceLayout,null);
             }
             final CrearPartida modelo = mList.get(position);
+            ConstraintLayout fondo = view.findViewById(R.id.layoutFondoPartida);
             String _sEstado = "";
             String _sParticipantes = "";
             boolean _bPartidaFinalizada = false;
@@ -260,13 +292,16 @@ public class LobbyPartidasActivity extends AppCompatActivity {
                 if(jugador.getUser().equals(helper.GetUser())){
                     if (jugador.getEstado()==1){
                         _sEstado = "Esperando el turno";
+                        fondo.setBackgroundColor(Color.parseColor("#81B9E3"));
                     }
                     else if(jugador.getEstado()==3){
                         _sEstado = "Has perdido la partida";
+                        fondo.setBackgroundColor(Color.parseColor("#E38181"));
                         _bPartidaFinalizada = true;
                     }
                     else if(jugador.getEstado()==4){
                         _sEstado = "Has ganado la partida";
+                        fondo.setBackgroundColor(Color.parseColor("#84E381"));
                         _bPartidaFinalizada = true;
                     }
 
@@ -274,6 +309,7 @@ public class LobbyPartidasActivity extends AppCompatActivity {
             }
             if(modelo.getProximoJugador().equals(helper.GetUser()) && !_bPartidaFinalizada){
                 _sEstado = "Tu turno";
+                fondo.setBackgroundColor(Color.parseColor("#D4E381"));
             }
 
             TextView tvPartidaCon = view.findViewById(R.id.tvPartidaCon);
