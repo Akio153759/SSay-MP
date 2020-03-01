@@ -1,6 +1,7 @@
 package com.tamadev.ssay_mp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -11,6 +12,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,6 +27,8 @@ import database.SQLiteDB;
 
 public class PantallaInicialActivity extends AppCompatActivity {
 
+    private LoginButton loginButton;
+    private CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +37,28 @@ public class PantallaInicialActivity extends AppCompatActivity {
 
         final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Usuarios");
 
+        callbackManager = CallbackManager.Factory.create();
+        loginButton = (LoginButton)findViewById(R.id.loguinButton);
+
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                goMainScreen();
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(PantallaInicialActivity.this,"Cancelado",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(PantallaInicialActivity.this,"Error" + error,Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
+            }
+        });
+
+        /*
         final EditText etUsuario = (EditText)findViewById(R.id.etUsuarioIngreso);
         final EditText etPassword = (EditText)findViewById(R.id.etPasswordIngreso);
 
@@ -100,5 +130,18 @@ public class PantallaInicialActivity extends AppCompatActivity {
                 finish();
             }
         });
+        */
+    }
+
+    private void goMainScreen() {
+        Intent i = new Intent(PantallaInicialActivity.this,MenuPrincipalActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        callbackManager.onActivityResult(requestCode,resultCode,data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

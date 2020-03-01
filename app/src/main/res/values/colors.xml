@@ -11,4 +11,6 @@
     <color name="btn_azul_press">#00A1BD</color>
     <color name="btn_rojo_notpress">#770000</color>
     <color name="btn_rojo_press">#DC0000</color>
+    <color name="azul_fb_notpress">#205EEC</color>
+    <color name="azul_fb_press">#5780E6</color>
 </resources>

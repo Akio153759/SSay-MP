@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import database.SQLiteDB;
 
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
+
 public class MenuPrincipalActivity extends AppCompatActivity {
     private SQLiteDB helper;
     private String _sUsuario;
@@ -19,8 +22,19 @@ public class MenuPrincipalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_principal);
 
+        if(AccessToken.getCurrentAccessToken() == null){
+            goLoginScreen();
+        }
+
 
     }
+
+    private void goLoginScreen() {
+        Intent i = new Intent(this,PantallaInicialActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+    }
+
     public void CrearPartida(View view){
 
         Intent i = new Intent(this,CreacionPartida.class);
@@ -65,13 +79,16 @@ public class MenuPrincipalActivity extends AppCompatActivity {
         finish();
     }
     public void BorrarDatos(View vie){
+        LoginManager.getInstance().logOut();
+        goLoginScreen();
+        /*
         if(MenuPrincipalActivity.this.deleteDatabase("db")){
             Intent i = new Intent(MenuPrincipalActivity.this,PantallaInicialActivity.class);
             startActivity(i);
             finish();
         } else{
             Toast.makeText(this,"Error al cerrar sesión",Toast.LENGTH_SHORT).show();
-        }
+        }*/
     }
     public void Salir(View view)
     {

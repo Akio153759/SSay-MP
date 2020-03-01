@@ -15,4 +15,5 @@
     <string name="desplegarDatos">Desplegar Datos</string>
     <string name="getDatos">Descargar Datos</string>
     <string name="borrarDatos">Borrar Datos</string>
+    <string name="facebook_app_id">546319959318650</string>
 </resources>
