@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tamadev.ssay_mp.classes.CrearPartida;
+import com.tamadev.ssay_mp.classes.Perfil;
 import com.tamadev.ssay_mp.utils.AlertDialogTwoButtons;
 import com.tamadev.ssay_mp.utils.AnimatorController;
 
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                 _objPartida = NodoPartida.getValue(CrearPartida.class);
                 for(int i = 0; i<_objPartida.getJugadores().size();i++)
                 {
-                    if (_objPartida.getJugadores().get(i).getUser().equals(helper.GetUser())){
+                    if (_objPartida.getJugadores().get(i).getUser().equals(Perfil.USER_ID)){
                         _iPositionInListaJugadores = i;
                         break;
                     }

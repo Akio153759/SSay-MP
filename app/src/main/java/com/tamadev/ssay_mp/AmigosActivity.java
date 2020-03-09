@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tamadev.ssay_mp.classes.LV_Usuario;
+import com.tamadev.ssay_mp.classes.Perfil;
 import com.tamadev.ssay_mp.classes.UsuarioEnFirebase;
 import com.tamadev.ssay_mp.utils.AlertDialogSearchUser;
 
@@ -68,7 +69,7 @@ public class AmigosActivity extends AppCompatActivity {
         _lSolicitudesAdapter.setNotifyOnChange(true);
         lvSolicitudes.setAdapter(_lSolicitudesAdapter);
 
-        DBrefUsuario = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(helper.GetUser());
+        DBrefUsuario = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(Perfil.USER_ID);
         /*
         etSearchAmigos = (EditText)findViewById(R.id.etSearchAmigos);
 
@@ -270,7 +271,7 @@ public class AmigosActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     DBrefUsuario.child("Amigos").push().setValue(modelo.getUsuario());
                     DatabaseReference DBrefAmigo = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(modelo.getUsuario()).child("Amigos");
-                    DBrefAmigo.push().setValue(helper.GetUser());
+                    DBrefAmigo.push().setValue(Perfil.USER_ID);
                     DBrefUsuario.child("SolicitudesAmistad").child(modelo.getId()).removeValue();
                 }
             });

@@ -28,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.tamadev.ssay_mp.classes.CrearPartida;
 import com.tamadev.ssay_mp.classes.Jugador;
 import com.tamadev.ssay_mp.classes.LV_Usuario;
+import com.tamadev.ssay_mp.classes.Perfil;
 import com.tamadev.ssay_mp.classes.SolicitudPartida;
 
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class LobbyPartidasActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot NodosPrincipal) {
                 _dataListPartidas.clear();
                 _dataListSolicitudes.clear();
-                for(DataSnapshot nodo: NodosPrincipal.child("Usuarios").child(helper.GetUser()).getChildren()){
+                for(DataSnapshot nodo: NodosPrincipal.child("Usuarios").child(Perfil.USER_ID).getChildren()){
                     switch (nodo.getKey()){
                         case "SolicitudesPartidas":
                             for(DataSnapshot partida: nodo.getChildren()){
@@ -105,7 +106,7 @@ public class LobbyPartidasActivity extends AppCompatActivity {
                         String ProxJugadorA = _dataListPartidas.get(indiceA).getProximoJugador();
                         String ProxJugadorB = _dataListPartidas.get(indiceB).getProximoJugador();
 
-                        if (ProxJugadorB.equals(helper.GetUser()) && !ProxJugadorA.equals(helper.GetUser())) {
+                        if (ProxJugadorB.equals(Perfil.USER_ID) && !ProxJugadorA.equals(Perfil.USER_ID)) {
                             CrearPartida auxItemDataListPartidas = _dataListPartidas.get(indiceA);
                             CrearPartida auxItemDataListPartidasB = _dataListPartidas.get(indiceB);
                             _dataListPartidas.remove(indiceA);
@@ -289,7 +290,7 @@ public class LobbyPartidasActivity extends AppCompatActivity {
             boolean _bPartidaFinalizada = false;
             for(Jugador jugador: modelo.getJugadores()){
                 _sParticipantes += jugador.getUser() + ", ";
-                if(jugador.getUser().equals(helper.GetUser())){
+                if(jugador.getUser().equals(Perfil.USER_ID)){
                     if (jugador.getEstado()==1){
                         _sEstado = "Esperando el turno";
                         fondo.setBackgroundColor(Color.parseColor("#81B9E3"));
@@ -307,7 +308,7 @@ public class LobbyPartidasActivity extends AppCompatActivity {
 
                 }
             }
-            if(modelo.getProximoJugador().equals(helper.GetUser()) && !_bPartidaFinalizada){
+            if(modelo.getProximoJugador().equals(Perfil.USER_ID) && !_bPartidaFinalizada){
                 _sEstado = "Tu turno";
                 fondo.setBackgroundColor(Color.parseColor("#D4E381"));
             }
@@ -365,11 +366,11 @@ public class LobbyPartidasActivity extends AppCompatActivity {
             btnPos.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DBrefUsuario.child("Usuarios").child(helper.GetUser()).child("Partidas").push().setValue(modelo.getIdPartida());
-                    DBrefUsuario.child("Usuarios").child(helper.GetUser()).child("SolicitudesPartidas").child(modelo.getId()).removeValue();
+                    DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Partidas").push().setValue(modelo.getIdPartida());
+                    DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("SolicitudesPartidas").child(modelo.getId()).removeValue();
                     for(int i = 0; i<modelo.getJugadores().size();i++)
                     {
-                        if (modelo.getJugadores().get(i).getSolicitud_usuario().replace("{solicitud_usuario=","").replace("}","").equals(helper.GetUser())){
+                        if (modelo.getJugadores().get(i).getSolicitud_usuario().replace("{solicitud_usuario=","").replace("}","").equals(Perfil.USER_ID)){
                             DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("jugadores").child(String.valueOf(i)).child("estado").setValue(1);
 
                             break;
@@ -382,12 +383,12 @@ public class LobbyPartidasActivity extends AppCompatActivity {
             btnNeg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DBrefUsuario.child("Usuarios").child(helper.GetUser()).child("SolicitudesPartidas").child(modelo.getId()).removeValue();
+                    DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("SolicitudesPartidas").child(modelo.getId()).removeValue();
                     for(int i = 0; i<modelo.getJugadores().size();i++)
                     {
-                        if (modelo.getJugadores().get(i).getSolicitud_usuario().replace("{solicitud_usuario=","").replace("}","").equals(helper.GetUser())){
+                        if (modelo.getJugadores().get(i).getSolicitud_usuario().replace("{solicitud_usuario=","").replace("}","").equals(Perfil.USER_ID)){
                             DBrefUsuario.child("Partidas").child(modelo.getIdPartida()).child("jugadores").child(String.valueOf(i)).child("estado").setValue(2);
-                            if(_listaSolicitudPartidas.get(position).getProximoJugador().equals(helper.GetUser())) {
+                            if(_listaSolicitudPartidas.get(position).getProximoJugador().equals(Perfil.USER_ID)) {
                                 int pasarTurno = i;
 
                                 while (pasarTurno < modelo.getJugadores().size() - 1) {

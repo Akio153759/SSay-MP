@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tamadev.ssay_mp.R;
 import com.tamadev.ssay_mp.classes.Friends;
+import com.tamadev.ssay_mp.classes.Perfil;
 
 import database.SQLiteDB;
 
@@ -85,7 +86,7 @@ public class AlertDialogSearchUser{
             public void onClick(View v) {
                 SQLiteDB helper = new SQLiteDB(context,"db",null,1);
                 DatabaseReference DBrefUserAdd = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(_sUser);
-                DBrefUserAdd.child("SolicitudesAmistad").push().setValue(helper.GetUser());
+                DBrefUserAdd.child("SolicitudesAmistad").push().setValue(Perfil.USER_ID);
                 Toast.makeText(context,"Solicitud de amistad enviada a " + _sUser,Toast.LENGTH_SHORT).show();
                 ibtnAdd.setVisibility(View.INVISIBLE);
             }

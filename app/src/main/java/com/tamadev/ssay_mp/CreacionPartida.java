@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.tamadev.ssay_mp.classes.CrearPartida;
 import com.tamadev.ssay_mp.classes.Jugador;
 import com.tamadev.ssay_mp.classes.LV_Usuario;
+import com.tamadev.ssay_mp.classes.Perfil;
 import com.tamadev.ssay_mp.classes.SolicitudPartida;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class CreacionPartida extends AppCompatActivity {
 
 
         DBrefUsuario = FirebaseDatabase.getInstance().getReference().child("Usuarios");
-        DBrefUsuario.child(helper.GetUser()).addListenerForSingleValueEvent(new ValueEventListener() {
+        DBrefUsuario.child(Perfil.USER_ID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot Nodos) {
                 for(DataSnapshot nodo: Nodos.getChildren()){
@@ -103,7 +104,7 @@ public class CreacionPartida extends AppCompatActivity {
     public void ConfirmarPartida(View view){
 
         ArrayList<String> Secuencia = new ArrayList<>();
-        _dataListJugadores.add(new LV_Usuario(helper.GetUser()));
+        _dataListJugadores.add(new LV_Usuario(Perfil.USER_ID));
 
 
         for (int i = 0; i < 4; i++) {
@@ -125,7 +126,7 @@ public class CreacionPartida extends AppCompatActivity {
 
         ArrayList<Jugador> Jugadores = new ArrayList<>();
         for(LV_Usuario jugador: _dataListJugadores){
-            if(jugador.getSolicitud_usuario().equals(helper.GetUser())){
+            if(jugador.getSolicitud_usuario().equals(Perfil.USER_ID)){
                 Jugadores.add(new Jugador(jugador.getSolicitud_usuario(),1));
             }
             else{
@@ -135,11 +136,11 @@ public class CreacionPartida extends AppCompatActivity {
         }
         Partida.setCantidadJugadores(_dataListJugadores.size());
         Partida.setJugadores(Jugadores);
-        Partida.setProximoJugador(helper.GetUser());
+        Partida.setProximoJugador(Perfil.USER_ID);
         Partida.setSecuencia(Secuencia);
         Partida.setID(Partida.GenerarIDPartida(_dataListJugadores.toString() + Secuencia.toString() + (int) (Math.random() * 999999)));
         Partida.setEstado(1);
-        Partida.setAnfitrion(helper.GetUser());
+        Partida.setAnfitrion(Perfil.USER_ID);
 
         DBrefPartidas = FirebaseDatabase.getInstance().getReference().child("Partidas");
 
@@ -150,8 +151,8 @@ public class CreacionPartida extends AppCompatActivity {
 
             // Enviando la solicitud de partida a todos los participantes
             for(LV_Usuario participante : _dataListJugadores){
-                if(participante.getSolicitud_usuario().equals(helper.GetUser())){
-                    DBrefUsuario.child(helper.GetUser()).child("Partidas").push().setValue(Partida.getID());
+                if(participante.getSolicitud_usuario().equals(Perfil.USER_ID)){
+                    DBrefUsuario.child(Perfil.USER_ID).child("Partidas").push().setValue(Partida.getID());
                     continue;
                 }
                 SolicitudPartida solicitudPartida = new SolicitudPartida(Partida.getID(),_dataListJugadores,Partida.getAnfitrion());
