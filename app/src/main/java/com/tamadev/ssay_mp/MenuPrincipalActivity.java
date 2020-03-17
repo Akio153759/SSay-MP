@@ -1,14 +1,28 @@
 package com.tamadev.ssay_mp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import database.SQLiteDB;
@@ -23,20 +37,64 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.tamadev.ssay_mp.classes.CrearPartida;
+import com.tamadev.ssay_mp.classes.Jugador;
+import com.tamadev.ssay_mp.classes.LV_Usuario;
 import com.tamadev.ssay_mp.classes.Perfil;
+import com.tamadev.ssay_mp.classes.SolicitudPartida;
 import com.tamadev.ssay_mp.utils.AlertDialogIngreso;
+import com.tamadev.ssay_mp.utils.RecyclerViewAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MenuPrincipalActivity extends AppCompatActivity implements AlertDialogIngreso.AlertDialogIngresoCallback {
     private SQLiteDB helper;
     private DatabaseReference DBrefUsuario;
-    private ImageView ivProfile;
+    private ImageView ivProfilePhoto, ivLvlIcon;
+    private ImageButton ibMore;
+    private TextView tvNickName, tvLvlTxt;
+    private ArrayList<CrearPartida> _dataListPartidas = new ArrayList<>();
+    private ArrayList<SolicitudPartida> _dataListSolicitudes= new ArrayList<>();
+    private ArrayList<CrearPartida> _listaSolicitudPartidas = new ArrayList<>();
+    private ArrayList<String> _lUrlImagesP1 = new ArrayList<>();
+    private ArrayList<String> _lUrlImagesP2 = new ArrayList<>();
+    private ArrayList<String> _lUrlImagesP3 = new ArrayList<>();
+    private ArrayList<String> _lUrlImagesP4 = new ArrayList<>();
+    private ArrayList<String> _lPlayerHost = new ArrayList<>();
+    private RecyclerViewAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Full screen mode
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_splash_screen);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_menu_principal);
+
+        ivProfilePhoto = findViewById(R.id.ivProfilePhoto);
+        ivLvlIcon = findViewById(R.id.ivLvl);
+        ibMore = findViewById(R.id.ibMore);
+        tvNickName = findViewById(R.id.tvProfileNick);
+        tvLvlTxt = findViewById(R.id.tvLvl);
+
+
+
         DBrefUsuario = FirebaseDatabase.getInstance().getReference();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(MenuPrincipalActivity.this,LinearLayoutManager.HORIZONTAL,false);
+        RecyclerView recyclerView = findViewById(R.id.my_recycler_view);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new RecyclerViewAdapter(MenuPrincipalActivity.this,_dataListPartidas);
+
+        recyclerView.setAdapter(adapter);
+
+
 
         if(user != null){
 
@@ -45,9 +103,9 @@ public class MenuPrincipalActivity extends AppCompatActivity implements AlertDia
             Perfil.URL_IMAGE_PROFILE = user.getPhotoUrl();
             Perfil.UID = user.getUid();
 
-            ivProfile = (ImageView)findViewById(R.id.ivPerfil);
 
-            Picasso.with(this).load(Perfil.URL_IMAGE_PROFILE).error(R.mipmap.ic_launcher).fit().centerInside().into(ivProfile);
+            Picasso.with(this).load(Perfil.URL_IMAGE_PROFILE).error(R.mipmap.ic_launcher).fit().centerInside().into(ivProfilePhoto);
+
 
 
             DBrefUsuario.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -57,6 +115,9 @@ public class MenuPrincipalActivity extends AppCompatActivity implements AlertDia
                         try{
                             Perfil.USER_ID = dataSnapshot.child("IdentificadoresUnicos").child(Perfil.UID).getValue().toString();
                             Perfil.NAME = dataSnapshot.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("nombre").getValue().toString();
+                            getPartidasActuales();
+                            tvNickName.setText(Perfil.USER_ID);
+
                         }catch (Exception ex){
                             new AlertDialogIngreso(MenuPrincipalActivity.this,"Ingresa un apodo", "Aceptar","Tu nick",5,16,MenuPrincipalActivity.this);
 
@@ -113,22 +174,74 @@ public class MenuPrincipalActivity extends AppCompatActivity implements AlertDia
     }
 
      */
-    public void goAmigos(View view){
+    private void goAmigos(View view){
 
         Intent i = new Intent(this, AmigosActivity.class);
         startActivity(i);
         finish();
     }
-    public void CrearPerfil(View view){
-        Intent i = new Intent(this, RegistroActivity.class);
-        startActivity(i);
-        finish();
-    }
+
     public void Jugar(View view){
         Intent i = new Intent(MenuPrincipalActivity.this,LobbyPartidasActivity.class);
         startActivity(i);
         finish();
     }
+
+    private void getPartidasActuales(){
+
+        DBrefUsuario.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot NodosPrincipal) {
+                _dataListPartidas.clear();
+                _dataListSolicitudes.clear();
+                for(DataSnapshot nodo: NodosPrincipal.child("Usuarios").child(Perfil.USER_ID).getChildren()){
+                    switch (nodo.getKey()){
+                        case "SolicitudesPartidas":
+                            for(DataSnapshot partida: nodo.getChildren()){
+                                ArrayList<LV_Usuario> jugadores = new ArrayList<>();
+                                for(DataSnapshot jugador: nodo.child(partida.getKey()).child("jugadores").getChildren()){
+                                    jugadores.add(new LV_Usuario(jugador.getValue().toString()));
+                                }
+                                SolicitudPartida sp = new SolicitudPartida(partida.getKey(),nodo.child(partida.getKey()).child("idPartida").getValue().toString(),jugadores,nodo.child(partida.getKey()).child("anfitrion").getValue().toString());
+                                _dataListSolicitudes.add(sp);
+                                _listaSolicitudPartidas.add(NodosPrincipal.child("Partidas").child(sp.getIdPartida()).getValue(CrearPartida.class));
+                            }
+
+                            break;
+                        case "Partidas":
+
+                            for(DataSnapshot partida: nodo.getChildren()){
+
+                               CrearPartida _objCrearPartida = (NodosPrincipal.child("Partidas").child(partida.getValue().toString()).getValue(CrearPartida.class));
+
+                                for(int _iMyIndexPlay = 0; _iMyIndexPlay < _objCrearPartida.getJugadores().size(); _iMyIndexPlay++){
+                                    if(_objCrearPartida.getJugadores().get(_iMyIndexPlay).getUser().equals(Perfil.USER_ID) && _objCrearPartida.getJugadores().get(_iMyIndexPlay).getEstado() == 1){
+                                        _dataListPartidas.add(_objCrearPartida);
+                                    }
+                                }
+
+                            }
+
+                            break;
+                    }
+
+                }
+
+                adapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void initRecyclerView(){
+
+    }
+
     public void BorrarDatos(View vie){
         FirebaseAuth.getInstance().signOut();
         LoginManager.getInstance().logOut();
@@ -154,7 +267,11 @@ public class MenuPrincipalActivity extends AppCompatActivity implements AlertDia
             DBrefUsuario.child("IdentificadoresUnicos").child(Perfil.UID).setValue(Perfil.USER_ID);
             DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("nombre").setValue(Perfil.NAME);
             DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("usuario").setValue(Perfil.USER_ID);
+            DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("urlProfileImage").setValue(Perfil.URL_IMAGE_PROFILE.toString());
             DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("uid").setValue(Perfil.UID);
+
         }
     }
+
+
 }

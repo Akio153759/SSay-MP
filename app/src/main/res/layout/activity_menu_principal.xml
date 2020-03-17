@@ -1,54 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:background="@android:color/white"
     tools:context=".MenuPrincipalActivity">
 
+
     <LinearLayout
-        android:layout_width="200dp"
-        android:layout_height="match_parent"
-        android:gravity="bottom"
-        android:orientation="vertical"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="100dp">
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/ivPerfil"
-            android:layout_width="50dp"
-            android:layout_height="50dp" />
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="Jugar"
-            android:text="Jugar" />
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="goAmigos"
-            android:text="Amigos" />
-
-        <Button
-            android:id="@+id/button9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:onClick="Salir"
-            android:text="Salir" />
+            android:id="@+id/ivProfilePhoto"
+            android:layout_width="0dp"
+            android:foreground="@drawable/circle_icon_white"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/ic_menu_gallery" />
 
         <TextView
-            android:id="@+id/textView3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:gravity="center"
-            android:onClick="BorrarDatos"
-            android:text="Cerrar sesión" />
+            android:id="@+id/tvProfileNick"
+            android:text="User"
+            android:textSize="18sp"
+            android:gravity="center_vertical"
+            android:paddingLeft="8dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"/>
 
+        <ImageView
+            android:id="@+id/ivLvl"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/btn_star_big_on" />
+
+        <TextView
+            android:id="@+id/tvLvl"
+            android:textSize="20sp"
+            android:gravity="center_vertical"
+            android:paddingLeft="8dp"
+            android:text="18"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"/>
+
+        <ImageButton
+            android:id="@+id/ibMore"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            app:srcCompat="@android:drawable/ic_menu_more" />
     </LinearLayout>
-</RelativeLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6">
+
+
+        <Button
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:onClick="Jugar"
+            android:layout_marginBottom="10dp"
+            android:text="Jugar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/my_recycler_view"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"/>
+
+
+</LinearLayout>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginRight="15dp"
+    android:layout_height="170dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:background="@drawable/card_partida">
+
+
+
+        <TextView
+            android:id="@+id/tvAnfitrion"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:text="Partida de ElAko"
+            android:textSize="14sp"/>
+        <TextView
+            android:id="@+id/tvExpiracion"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.67"
+            android:textSize="10sp"
+            android:textStyle="italic"
+            android:gravity="center"
+            android:text="Expira en 2 días"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3">
+
+            <ImageView
+                android:id="@+id/ivPlayer1"
+                android:layout_margin="3dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:foreground="@drawable/circle_icon_gray"
+                app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+            <ImageView
+                android:id="@+id/ivPlayer2"
+                android:layout_margin="3dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:foreground="@drawable/circle_icon_gray"
+                app:srcCompat="@android:drawable/ic_menu_gallery" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3">
+
+            <ImageView
+                android:id="@+id/ivPlayer3"
+                android:layout_margin="3dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:foreground="@drawable/circle_icon_gray"
+                app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+            <ImageView
+                android:id="@+id/ivPlayer4"
+                android:layout_margin="3dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:foreground="@drawable/circle_icon_gray"
+                app:srcCompat="@android:drawable/ic_menu_gallery" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/btnTurno"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Jugar"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:background="@drawable/label_turno"
+        />
+</LinearLayout>

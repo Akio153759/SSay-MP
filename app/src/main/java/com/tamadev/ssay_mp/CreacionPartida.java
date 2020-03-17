@@ -127,10 +127,11 @@ public class CreacionPartida extends AppCompatActivity {
         ArrayList<Jugador> Jugadores = new ArrayList<>();
         for(LV_Usuario jugador: _dataListJugadores){
             if(jugador.getSolicitud_usuario().equals(Perfil.USER_ID)){
-                Jugadores.add(new Jugador(jugador.getSolicitud_usuario(),1));
+                Jugadores.add(new Jugador(jugador.getSolicitud_usuario(),1,Perfil.URL_IMAGE_PROFILE.toString()));
             }
             else{
-                Jugadores.add(new Jugador(jugador.getSolicitud_usuario(),0));
+
+                Jugadores.add(new Jugador(jugador.getSolicitud_usuario(),0,"provisorio"));
             }
 
         }
