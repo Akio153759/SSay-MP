@@ -1,6 +1,7 @@
 package com.tamadev.ssay_mp.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
+import com.tamadev.ssay_mp.CreacionPartida;
+import com.tamadev.ssay_mp.LobbyPartidasActivity;
+import com.tamadev.ssay_mp.MainActivity;
+import com.tamadev.ssay_mp.MenuPrincipalActivity;
 import com.tamadev.ssay_mp.R;
 import com.tamadev.ssay_mp.classes.CrearPartida;
 import com.tamadev.ssay_mp.classes.Jugador;
@@ -41,7 +46,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         holder.ivPlayer1.setImageResource(0);
         holder.ivPlayer2.setImageResource(0);
         holder.ivPlayer3.setImageResource(0);
@@ -68,28 +73,58 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
 
             if(_objJugador.getUser().equals(Perfil.USER_ID)){
-                if (_objJugador.getEstado()==1){
-                    _sEstado = "Espera...";
-                    holder.btnTurno.setEnabled(false);
 
+                if (_objJugador.getEstado()==1 && !_dataListPartidas.get(position).getProximoJugador().equals(Perfil.USER_ID)){
+                    _sEstado = "Esperando";
+                    holder.lblTurno.setTextSize(16);
+                    holder.lblTurno.setBackgroundResource(R.drawable.label_turno);
+                    holder.lblTurno.setEnabled(false);
+
+                }
+                else if (_objJugador.getEstado()==1 && _dataListPartidas.get(position).getProximoJugador().equals(Perfil.USER_ID)){
+                    _sEstado = "Jugar";
+                    holder.lblTurno.setTextSize(18);
+                    holder.lblTurno.setBackgroundResource(R.drawable.label_turno);
+                    holder.lblTurno.setEnabled(true);
+                }
+                else if(_objJugador.getEstado()==0){
+                    _sEstado = "¿Aceptar partida?";
+                    holder.lblTurno.setEnabled(true);
+                    holder.lblTurno.setBackgroundResource(R.drawable.label_nueva_partida);
+                    holder.lblTurno.setTextSize(14);
                 }
 
             }
             _iPlayerIndex++;
         }
 
-        if(_dataListPartidas.get(position).getProximoJugador().equals(Perfil.USER_ID) && !_bPartidaFinalizada){
-            _sEstado = "Jugar";
-            holder.btnTurno.setEnabled(true);
-        }
 
-        holder.btnTurno.setText(_sEstado);
-        holder.tvAnfitrion.setText("Partida de " + _dataListPartidas.get(position).getAnfitrion());
 
-        holder.btnTurno.setOnClickListener(new View.OnClickListener() {
+        holder.lblTurno.setText(_sEstado);
+        holder.tvAnfitrion.setText(_dataListPartidas.get(position).getAnfitrion());
+
+        holder.lblTurno.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext,"Jugar Presionado",Toast.LENGTH_SHORT).show();
+                if(holder.lblTurno.getText().toString().equals("Jugar")){
+                    Intent i = new Intent(mContext, MainActivity.class);
+                    i.putExtra("IDPartida",_dataListPartidas.get(position).getID());
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mContext.startActivity(i);
+
+                }
+                else{
+                    for(int i = 0; i<_dataListPartidas.get(position).getJugadores().size();i++)
+                    {
+                        if (_dataListPartidas.get(position).getJugadores().get(i).getUser().equals(Perfil.USER_ID)){
+                            MenuPrincipalActivity.DBrefUsuario.child("Partidas").child(_dataListPartidas.get(position).getID()).child("jugadores").child(String.valueOf(i)).child("estado").setValue(1);
+
+                            break;
+                        }
+                    }
+
+
+                }
             }
         });
     }
@@ -103,7 +138,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         ImageView ivPlayer1, ivPlayer2, ivPlayer3, ivPlayer4;
         TextView tvAnfitrion, tvExpiracion;
-        Button btnTurno;
+        TextView lblTurno;
         public ViewHolder(View itemView){
             super(itemView);
             ivPlayer1 = itemView.findViewById(R.id.ivPlayer1);
@@ -111,7 +146,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             ivPlayer3 = itemView.findViewById(R.id.ivPlayer3);
             ivPlayer4 = itemView.findViewById(R.id.ivPlayer4);
             tvAnfitrion = itemView.findViewById(R.id.tvAnfitrion);
-            btnTurno = itemView.findViewById(R.id.btnTurno);
+            lblTurno = itemView.findViewById(R.id.btnTurno);
         }
     }
 }

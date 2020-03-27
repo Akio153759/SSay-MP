@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/play"
+            android:title="Juega" />
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/usersicon2"
+            android:title="Amigos" />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/historial"
+            android:title="Historial de partidas" />
+
+    </group>
+
+    <item android:title="Ayuda">
+        <menu>
+            <item
+                android:id="@+id/nav_tools"
+                android:icon="@drawable/cogs"
+                android:title="Preferencias" />
+
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/learn2"
+                android:title="¿Como jugar?" />
+
+        </menu>
+    </item>
+
+</menu>

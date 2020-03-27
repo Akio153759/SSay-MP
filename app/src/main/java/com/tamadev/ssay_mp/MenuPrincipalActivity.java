@@ -42,6 +42,7 @@ import com.tamadev.ssay_mp.classes.Jugador;
 import com.tamadev.ssay_mp.classes.LV_Usuario;
 import com.tamadev.ssay_mp.classes.Perfil;
 import com.tamadev.ssay_mp.classes.SolicitudPartida;
+import com.tamadev.ssay_mp.classes.UserFriendProfile;
 import com.tamadev.ssay_mp.utils.AlertDialogIngreso;
 import com.tamadev.ssay_mp.utils.RecyclerViewAdapter;
 
@@ -50,18 +51,13 @@ import java.util.List;
 
 public class MenuPrincipalActivity extends AppCompatActivity implements AlertDialogIngreso.AlertDialogIngresoCallback {
     private SQLiteDB helper;
-    private DatabaseReference DBrefUsuario;
+    public static DatabaseReference DBrefUsuario;
     private ImageView ivProfilePhoto, ivLvlIcon;
     private ImageButton ibMore;
     private TextView tvNickName, tvLvlTxt;
     private ArrayList<CrearPartida> _dataListPartidas = new ArrayList<>();
     private ArrayList<SolicitudPartida> _dataListSolicitudes= new ArrayList<>();
     private ArrayList<CrearPartida> _listaSolicitudPartidas = new ArrayList<>();
-    private ArrayList<String> _lUrlImagesP1 = new ArrayList<>();
-    private ArrayList<String> _lUrlImagesP2 = new ArrayList<>();
-    private ArrayList<String> _lUrlImagesP3 = new ArrayList<>();
-    private ArrayList<String> _lUrlImagesP4 = new ArrayList<>();
-    private ArrayList<String> _lPlayerHost = new ArrayList<>();
     private RecyclerViewAdapter adapter;
 
 
@@ -72,8 +68,8 @@ public class MenuPrincipalActivity extends AppCompatActivity implements AlertDia
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_splash_screen);
         getSupportActionBar().hide();
+
         setContentView(R.layout.activity_menu_principal);
 
         ivProfilePhoto = findViewById(R.id.ivProfilePhoto);
@@ -182,7 +178,7 @@ public class MenuPrincipalActivity extends AppCompatActivity implements AlertDia
     }
 
     public void Jugar(View view){
-        Intent i = new Intent(MenuPrincipalActivity.this,LobbyPartidasActivity.class);
+        Intent i = new Intent(MenuPrincipalActivity.this,CreacionPartida.class);
         startActivity(i);
         finish();
     }
@@ -198,9 +194,9 @@ public class MenuPrincipalActivity extends AppCompatActivity implements AlertDia
                     switch (nodo.getKey()){
                         case "SolicitudesPartidas":
                             for(DataSnapshot partida: nodo.getChildren()){
-                                ArrayList<LV_Usuario> jugadores = new ArrayList<>();
+                                ArrayList<UserFriendProfile> jugadores = new ArrayList<>();
                                 for(DataSnapshot jugador: nodo.child(partida.getKey()).child("jugadores").getChildren()){
-                                    jugadores.add(new LV_Usuario(jugador.getValue().toString()));
+                                    jugadores.add(new UserFriendProfile(jugador.child("user").getValue().toString(),jugador.child("urlImageUser").getValue().toString()));
                                 }
                                 SolicitudPartida sp = new SolicitudPartida(partida.getKey(),nodo.child(partida.getKey()).child("idPartida").getValue().toString(),jugadores,nodo.child(partida.getKey()).child("anfitrion").getValue().toString());
                                 _dataListSolicitudes.add(sp);
@@ -214,12 +210,101 @@ public class MenuPrincipalActivity extends AppCompatActivity implements AlertDia
 
                                CrearPartida _objCrearPartida = (NodosPrincipal.child("Partidas").child(partida.getValue().toString()).getValue(CrearPartida.class));
 
+                                boolean _bPartidaActiva = false;
+                                // Mapeo en el objeto CrearPartida, las url profile image de los juadores de la partida consultando la url que cada jugador tiene en su perfil
                                 for(int _iMyIndexPlay = 0; _iMyIndexPlay < _objCrearPartida.getJugadores().size(); _iMyIndexPlay++){
-                                    if(_objCrearPartida.getJugadores().get(_iMyIndexPlay).getUser().equals(Perfil.USER_ID) && _objCrearPartida.getJugadores().get(_iMyIndexPlay).getEstado() == 1){
-                                        _dataListPartidas.add(_objCrearPartida);
+
+                                    _objCrearPartida.getJugadores().get(_iMyIndexPlay).setUrlImageUser(NodosPrincipal.child("Usuarios").
+                                                                                                                      child(_objCrearPartida.getJugadores().get(_iMyIndexPlay).getUser()).
+                                                                                                                      child("Perfil").
+                                                                                                                      child("urlProfileImage").getValue().toString());
+                                    // si yo estoy activo en la partida, activo el flag
+                                    if(_objCrearPartida.getJugadores().get(_iMyIndexPlay).getUser().equals(Perfil.USER_ID) && _objCrearPartida.getJugadores().get(_iMyIndexPlay).getEstado() == 1 || _objCrearPartida.getJugadores().get(_iMyIndexPlay).getUser().equals(Perfil.USER_ID) && _objCrearPartida.getJugadores().get(_iMyIndexPlay).getEstado() == 0){
+                                        _bPartidaActiva = true;
                                     }
                                 }
+                                if(_bPartidaActiva)
+                                    _dataListPartidas.add(_objCrearPartida);
 
+                            }
+                            int _iCounter = 1;
+                            int _iIndex1 = 0;
+                            int _iIndex2 = 1;
+
+                            CrearPartida _objAuxiliar = null;
+
+                            while (_iCounter <= _dataListPartidas.size()){
+                                while (_iIndex2 < _dataListPartidas.size()){
+
+                                    int _iIndex1Priority = 0;
+                                    int _iIndex2Priority = 0;
+
+                                    // Me busco en la lista de jugadores de la partida que apunta el indice 2
+                                    for(int i = 0; i < _dataListPartidas.get(_iIndex2).getJugadores().size(); i++){
+
+                                        if (_dataListPartidas.get(_iIndex2).getJugadores().get(i).getUser().equals(Perfil.USER_ID)){
+
+                                            // una vez encontrado establesco el nivel de prioridad de ese indice con la info del estado y el proximo turno
+                                            int _iEstado = _dataListPartidas.get(_iIndex2).getJugadores().get(i).getEstado();
+                                            String _sProxJug = _dataListPartidas.get(_iIndex2).getProximoJugador();
+
+
+                                            if(_iEstado == 0 && _sProxJug.equals(Perfil.USER_ID)){
+                                                _iIndex2Priority = 1;
+                                            }
+                                            else if(_iEstado == 0 && !_sProxJug.equals(Perfil.USER_ID)){
+                                                _iIndex2Priority = 3;
+                                            }
+                                            else if(_iEstado == 1 && _sProxJug.equals(Perfil.USER_ID)){
+                                                _iIndex2Priority = 2;
+                                            }
+                                            else {
+                                                _iIndex2Priority = 4;
+                                            }
+
+                                            break;
+                                        }
+                                    }
+
+                                    for(int i = 0; i < _dataListPartidas.get(_iIndex1).getJugadores().size(); i++){
+
+                                        if (_dataListPartidas.get(_iIndex1).getJugadores().get(i).getUser().equals(Perfil.USER_ID)){
+
+                                            int _iEstado = _dataListPartidas.get(_iIndex1).getJugadores().get(i).getEstado();
+                                            String _sProxJug = _dataListPartidas.get(_iIndex1).getProximoJugador();
+
+
+                                            if(_iEstado == 0 && _sProxJug.equals(Perfil.USER_ID)){
+                                                _iIndex1Priority = 1;
+                                            }
+                                            else if(_iEstado == 0 && !_sProxJug.equals(Perfil.USER_ID)){
+                                                _iIndex1Priority = 3;
+                                            }
+                                            else if(_iEstado == 1 && _sProxJug.equals(Perfil.USER_ID)){
+                                                _iIndex1Priority = 2;
+                                            }
+                                            else {
+                                                _iIndex1Priority = 4;
+                                            }
+
+                                            break;
+                                        }
+                                    }
+
+                                    if(_iIndex2Priority < _iIndex1Priority){
+                                        _objAuxiliar = _dataListPartidas.get(_iIndex1);
+                                        _dataListPartidas.set(_iIndex1,_dataListPartidas.get(_iIndex2));
+                                        _dataListPartidas.set(_iIndex2,_objAuxiliar);
+
+                                    }
+
+                                    _iIndex1++;
+                                    _iIndex2++;
+                                }
+
+                                _iCounter++;
+                                _iIndex1 = 0;
+                                _iIndex2 = 1;
                             }
 
                             break;

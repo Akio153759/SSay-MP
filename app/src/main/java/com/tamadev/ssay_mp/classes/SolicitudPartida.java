@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 public class SolicitudPartida {
     private String id, idPartida, anfitrion;
-    private ArrayList<LV_Usuario> jugadores;
-    public SolicitudPartida(String id, String idPartida, ArrayList<LV_Usuario> jugadores, String anfitrion) {
+    private ArrayList<UserFriendProfile> jugadores;
+    public SolicitudPartida(String id, String idPartida, ArrayList<UserFriendProfile> jugadores, String anfitrion) {
         this.id = id;
         this.idPartida = idPartida;
         this.jugadores = jugadores;
         this.anfitrion = anfitrion;
     }
-    public SolicitudPartida(String idPartida, ArrayList<LV_Usuario> jugadores, String anfitrion) {
+    public SolicitudPartida(String idPartida, ArrayList<UserFriendProfile> jugadores, String anfitrion) {
 
         this.idPartida = idPartida;
         this.jugadores = jugadores;
@@ -42,11 +42,11 @@ public class SolicitudPartida {
         this.anfitrion = anfitrion;
     }
 
-    public ArrayList<LV_Usuario> getJugadores() {
+    public ArrayList<UserFriendProfile> getJugadores() {
         return jugadores;
     }
 
-    public void setJugadores(ArrayList<LV_Usuario> jugadores) {
+    public void setJugadores(ArrayList<UserFriendProfile> jugadores) {
         this.jugadores = jugadores;
     }
 }
