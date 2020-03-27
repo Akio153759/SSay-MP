@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tamadev.ssay_mp">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-
     <application
         android:name=".SSayMpApp"
         android:allowBackup="true"
@@ -12,39 +10,37 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
-         <activity
-             android:name="com.facebook.FacebookActivity"
-             android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-             android:label="@string/app_name">
-
-         </activity>
-
-
-
-
-        <activity android:name=".LobbyPartidasActivity"></activity>
-        <activity android:name=".PantallaInicialActivity" />
-        <activity android:name=".SplashScreenActivity">
+        <activity
+            android:name=".MenuPrincipalActivityNavDrawer"
+            android:label="@string/title_activity_menu_principal_nav_drawer"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity android:name=".LobbyPartidasActivity" />
+        <activity android:name=".PantallaInicialActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SplashScreenActivity"/>
         <activity android:name=".AmigosActivity" />
         <activity android:name=".CreacionPartida" />
         <activity android:name=".RegistroActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".MenuPrincipalActivity"></activity>
+        <activity android:name=".MenuPrincipalActivity" />
 
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 

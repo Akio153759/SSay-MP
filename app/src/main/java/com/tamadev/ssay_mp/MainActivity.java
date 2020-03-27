@@ -11,6 +11,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -396,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                 if(_objPartida.getJugadores().get(_iPosicionProximoJugador).getEstado()==0 || _objPartida.getJugadores().get(_iPosicionProximoJugador).getEstado()==1){
                     DBrefPartida.child(_sIDPartida).child("proximoJugador").setValue(_objPartida.getJugadores().get(_iPosicionProximoJugador).getUser());
 
-                    Intent i = new Intent(MainActivity.this,LobbyPartidasActivity.class);
+                    Intent i = new Intent(MainActivity.this, MenuPrincipalActivityNavDrawer.class);
                     startActivity(i);
                     finish();
 
@@ -413,7 +414,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
             if(_objPartida.getJugadores().get(_iPosicionProximoJugador).getEstado()==0 || _objPartida.getJugadores().get(_iPosicionProximoJugador).getEstado()==1){
                 DBrefPartida.child(_sIDPartida).child("proximoJugador").setValue(_objPartida.getJugadores().get(_iPosicionProximoJugador).getUser());
 
-                Intent i = new Intent(MainActivity.this,LobbyPartidasActivity.class);
+                Intent i = new Intent(MainActivity.this,MenuPrincipalActivityNavDrawer.class);
                 startActivity(i);
                 finish();
 
@@ -430,7 +431,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
     public void ResultCallback(int Result) {
         switch (Result){
             case 0:
-                Intent i = new Intent(MainActivity.this,LobbyPartidasActivity.class);
+                Intent i = new Intent(MainActivity.this,MenuPrincipalActivityNavDrawer.class);
                 startActivity(i);
                 finish();
                 break;

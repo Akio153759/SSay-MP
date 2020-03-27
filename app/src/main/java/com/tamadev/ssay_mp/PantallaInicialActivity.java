@@ -81,7 +81,7 @@ public class PantallaInicialActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if(user != null){
-                    goMainScreen();
+                    goSplashScreen();
                 }
             }
         };
@@ -179,8 +179,8 @@ public class PantallaInicialActivity extends AppCompatActivity {
     }
 
 
-    private void goMainScreen() {
-        Intent i = new Intent(PantallaInicialActivity.this,MenuPrincipalActivity.class);
+    private void goSplashScreen() {
+        Intent i = new Intent(PantallaInicialActivity.this,SplashScreenActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
     }

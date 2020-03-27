@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="70dp"
+    android:layout_marginRight="5dp"
+    android:layout_height="70dp">
+
+    <ImageView
+        android:id="@+id/ivPhotoFriend"
+        android:layout_width="50dp"
+        android:layout_gravity="center"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:foreground="@drawable/circle_icon_white"
+        app:srcCompat="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/lblUserFriend"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textSize="12sp"
+        android:layout_weight="1.5"
+        android:textColor="@android:color/holo_red_dark"
+        android:text="ElAko"
+        android:gravity="center"/>
+
+</LinearLayout>

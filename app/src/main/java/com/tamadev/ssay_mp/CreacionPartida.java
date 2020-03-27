@@ -1,36 +1,41 @@
 package com.tamadev.ssay_mp;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 import com.tamadev.ssay_mp.classes.CrearPartida;
 import com.tamadev.ssay_mp.classes.Jugador;
 import com.tamadev.ssay_mp.classes.LV_Usuario;
 import com.tamadev.ssay_mp.classes.Perfil;
 import com.tamadev.ssay_mp.classes.SolicitudPartida;
+import com.tamadev.ssay_mp.classes.UserFriendProfile;
+import com.tamadev.ssay_mp.utils.RVAdapterFriends;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import database.SQLiteDB;
 
@@ -39,36 +44,93 @@ public class CreacionPartida extends AppCompatActivity {
     private CheckBox cbAmigo1, cbAmigo2, cbAmigo3, cbAmigo4;
     private SQLiteDB helper = new SQLiteDB(this,"db",null,1);
     private DatabaseReference DBrefPartidas;
-    private ArrayList<LV_Usuario> _dataListJugadores = new ArrayList<>();
-    private ArrayList<LV_Usuario> _dataListAmigosAdd = new ArrayList<>();
-    private List_Adapter_Add _adapterAmigosAdd;
-    private List_Adapter_Remove _adapterAmigosRemove;
+
+    private ArrayList<UserFriendProfile> _dataListAmigosAdd = new ArrayList<>();
+    private ArrayList<UserFriendProfile> _dataListAmigosAddFilter = new ArrayList<>();
+    private RVAdapterFriends _adapterAmigosAdd;
     private ListView _lvParticipantes;
-    private ListView _lvAmigos;
+    private RecyclerView _lvAmigos;
     private DatabaseReference DBrefUsuario;
+    private TextView lblAnfitrion;
+    private EditText inputSearchFriend;
+
+    public static ArrayList<UserFriendProfile> LISTA_JUGADORES_SALA = new ArrayList<>();
+    public static ImageView IV_ANFITRION_SALA;
+    public static ImageView IV_P2_SALA;
+    public static ImageView IV_P3_SALA;
+    public static ImageView IV_P4_SALA;
+    public static TextView LBL_ANFITRION_SALA;
+    public static TextView LBL_P2_SALA;
+    public static TextView LBL_P3_SALA;
+    public static TextView LBL_P4_SALA;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Full screen mode
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_creacion_partida);
 
-        _lvAmigos = (ListView)findViewById(R.id.lvAddAmigos);
-        _lvParticipantes = (ListView)findViewById(R.id.lvParticipantes);
 
+
+        IV_ANFITRION_SALA = findViewById(R.id.ivAnfitrion);
+        IV_P2_SALA = findViewById(R.id.ivPlayer2);
+        IV_P3_SALA = findViewById(R.id.ivPlayer3);
+        IV_P4_SALA = findViewById(R.id.ivPlayer4);
+        LBL_ANFITRION_SALA = findViewById(R.id.tvAnfitrion);
+        LBL_P2_SALA = findViewById(R.id.tvPlayer2);
+        LBL_P3_SALA = findViewById(R.id.tvPlayer3);
+        LBL_P4_SALA = findViewById(R.id.tvPlayer4);
+        lblAnfitrion = findViewById(R.id.lblAnfitrion);
+        inputSearchFriend = findViewById(R.id.etSearchFriend);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(CreacionPartida.this,LinearLayoutManager.HORIZONTAL,false);
+        _lvAmigos = (RecyclerView)findViewById(R.id.rv_friends_add);
+        _lvAmigos.setLayoutManager(layoutManager);
+        _adapterAmigosAdd = new RVAdapterFriends(_dataListAmigosAddFilter,CreacionPartida.this);
+
+        _lvAmigos.setAdapter(_adapterAmigosAdd);
+
+        Picasso.with(CreacionPartida.this).load(Perfil.URL_IMAGE_PROFILE).error(R.mipmap.ic_launcher).fit().centerInside().into(IV_ANFITRION_SALA);
+        LBL_ANFITRION_SALA.setText(Perfil.USER_ID);
+        LISTA_JUGADORES_SALA.add(new UserFriendProfile(Perfil.USER_ID,Perfil.URL_IMAGE_PROFILE.toString()));
+        lblAnfitrion.setText("Partida de " + Perfil.USER_ID);
+
+
+
+        IV_P2_SALA.setEnabled(false);
+        IV_P3_SALA.setEnabled(false);
+        IV_P4_SALA.setEnabled(false);
+
+        LBL_P2_SALA.setEnabled(false);
+        LBL_P3_SALA.setEnabled(false);
+        LBL_P4_SALA.setEnabled(false);
 
 
         DBrefUsuario = FirebaseDatabase.getInstance().getReference().child("Usuarios");
-        DBrefUsuario.child(Perfil.USER_ID).addListenerForSingleValueEvent(new ValueEventListener() {
+        DBrefUsuario.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot Nodos) {
-                for(DataSnapshot nodo: Nodos.getChildren()){
+                for(DataSnapshot nodo: Nodos.child(Perfil.USER_ID).getChildren()){
                     switch (nodo.getKey()){
                         case "Amigos":
                             for(DataSnapshot amigo: nodo.getChildren()){
-                                _dataListAmigosAdd.add(new LV_Usuario(amigo.getValue().toString()));
+                                UserFriendProfile _objFriend = new UserFriendProfile(Nodos.child(amigo.getValue().toString()).
+                                                                                           child("Perfil").
+                                                                                           child("usuario").getValue().toString(),
+                                                                                            Nodos.child(amigo.getValue().toString()).
+                                                                                                  child("Perfil").
+                                                                                                  child("urlProfileImage").getValue().toString());
+                                _dataListAmigosAdd.add(_objFriend);
                             }
-                            _adapterAmigosAdd = new List_Adapter_Add(CreacionPartida.this,R.layout.item_row_participante_add,_dataListAmigosAdd);
-                            _adapterAmigosAdd.setNotifyOnChange(true);
-                            _lvAmigos.setAdapter(_adapterAmigosAdd);
+                            for (UserFriendProfile ufp: _dataListAmigosAdd){
+                                _dataListAmigosAddFilter.add(ufp);
+                            }
                             break;
                     }
                 }
@@ -80,32 +142,96 @@ public class CreacionPartida extends AppCompatActivity {
             }
         });
 
+        IV_P2_SALA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        Cursor _cAmigos = helper.ConsultarAmigos();
-        if(_cAmigos.moveToFirst()){
-            do{
-                LV_Usuario lvu = new LV_Usuario(_cAmigos.getString(0));
-                _dataListAmigosAdd.add(lvu);
-            }while (_cAmigos.moveToNext());
-        }
+                String _sUserRemove = LBL_P2_SALA.getText().toString();
+                for(int i = 0; i < LISTA_JUGADORES_SALA.size(); i++){
+                    if (LISTA_JUGADORES_SALA.get(i).getUserID().equals(_sUserRemove)){
+                        LISTA_JUGADORES_SALA.remove(i);
+                    }
+                }
+                IV_P2_SALA.setEnabled(false);
+                IV_P2_SALA.setImageResource(R.mipmap.ic_launcher);
+                LBL_P2_SALA.setEnabled(false);
+                LBL_P2_SALA.setText("Vacio");
+            }
+        });
 
+        IV_P3_SALA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                String _sUserRemove = LBL_P3_SALA.getText().toString();
+                for(int i = 0; i < LISTA_JUGADORES_SALA.size(); i++){
+                    if (LISTA_JUGADORES_SALA.get(i).getUserID().equals(_sUserRemove)){
+                        LISTA_JUGADORES_SALA.remove(i);
+                    }
+                }
+                IV_P3_SALA.setEnabled(false);
+                IV_P3_SALA.setImageResource(R.mipmap.ic_launcher);
+                LBL_P3_SALA.setEnabled(false);
+                LBL_P3_SALA.setText("Vacio");
+            }
+        });
 
+        IV_P4_SALA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                String _sUserRemove = LBL_P4_SALA.getText().toString();
+                for(int i = 0; i < LISTA_JUGADORES_SALA.size(); i++){
+                    if (LISTA_JUGADORES_SALA.get(i).getUserID().equals(_sUserRemove)){
+                        LISTA_JUGADORES_SALA.remove(i);
+                    }
+                }
+                IV_P4_SALA.setEnabled(false);
+                IV_P4_SALA.setImageResource(R.mipmap.ic_launcher);
+                LBL_P4_SALA.setEnabled(false);
+                LBL_P4_SALA.setText("Vacio");
+            }
+        });
 
+        inputSearchFriend.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        _adapterAmigosRemove = new List_Adapter_Remove(CreacionPartida.this,R.layout.item_row_participante_remove,_dataListJugadores);
-        _adapterAmigosRemove.setNotifyOnChange(true);
-        _lvParticipantes.setAdapter(_adapterAmigosRemove);
+            }
 
-        helper.close();
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(inputSearchFriend.getText().toString().equalsIgnoreCase("")){
+                    _dataListAmigosAddFilter.clear();
+                    for (UserFriendProfile ufp: _dataListAmigosAdd){
+                        _dataListAmigosAddFilter.add(ufp);
+                    }
+                    _adapterAmigosAdd.notifyDataSetChanged();
+                    return;
+                }
+                _dataListAmigosAddFilter.clear();
+                for (UserFriendProfile friendFilter: _dataListAmigosAdd){
+                    if (friendFilter.getUserID().toLowerCase().contains(inputSearchFriend.getText().toString().toLowerCase())){
+                        _dataListAmigosAddFilter.add(friendFilter);
+                    }
+                }
+                _adapterAmigosAdd.notifyDataSetChanged();
+            }
+        });
     }
 
     public void ConfirmarPartida(View view){
+        if(LISTA_JUGADORES_SALA.size() < 2){
+            Snackbar.make(view,R.string.msg_error_min_opponent,Snackbar.LENGTH_LONG).show();
+            return;
+        }
 
         ArrayList<String> Secuencia = new ArrayList<>();
-        _dataListJugadores.add(new LV_Usuario(Perfil.USER_ID));
-
 
         for (int i = 0; i < 4; i++) {
             int rand = (int) (Math.random() * 8) + 1;
@@ -125,21 +251,21 @@ public class CreacionPartida extends AppCompatActivity {
         CrearPartida Partida = new CrearPartida();
 
         ArrayList<Jugador> Jugadores = new ArrayList<>();
-        for(LV_Usuario jugador: _dataListJugadores){
-            if(jugador.getSolicitud_usuario().equals(Perfil.USER_ID)){
-                Jugadores.add(new Jugador(jugador.getSolicitud_usuario(),1,Perfil.URL_IMAGE_PROFILE.toString()));
+        for(UserFriendProfile jugador: LISTA_JUGADORES_SALA){
+            if(jugador.getUserID().equals(Perfil.USER_ID)){
+                Jugadores.add(new Jugador(jugador.getUserID(),1,Perfil.URL_IMAGE_PROFILE.toString()));
             }
             else{
 
-                Jugadores.add(new Jugador(jugador.getSolicitud_usuario(),0,"provisorio"));
+                Jugadores.add(new Jugador(jugador.getUserID(),0,jugador.getUrlImageProfile()));
             }
 
         }
-        Partida.setCantidadJugadores(_dataListJugadores.size());
+        Partida.setCantidadJugadores(LISTA_JUGADORES_SALA.size());
         Partida.setJugadores(Jugadores);
         Partida.setProximoJugador(Perfil.USER_ID);
         Partida.setSecuencia(Secuencia);
-        Partida.setID(Partida.GenerarIDPartida(_dataListJugadores.toString() + Secuencia.toString() + (int) (Math.random() * 999999)));
+        Partida.setID(Partida.GenerarIDPartida(LISTA_JUGADORES_SALA.toString() + Secuencia.toString() + (int) (Math.random() * 999999)));
         Partida.setEstado(1);
         Partida.setAnfitrion(Perfil.USER_ID);
 
@@ -151,14 +277,13 @@ public class CreacionPartida extends AppCompatActivity {
             //Creando partida en DB3
 
             // Enviando la solicitud de partida a todos los participantes
-            for(LV_Usuario participante : _dataListJugadores){
-                if(participante.getSolicitud_usuario().equals(Perfil.USER_ID)){
+            for(UserFriendProfile participante : LISTA_JUGADORES_SALA){
+                if(participante.getUserID().equals(Perfil.USER_ID)){
                     DBrefUsuario.child(Perfil.USER_ID).child("Partidas").push().setValue(Partida.getID());
                     continue;
                 }
-                SolicitudPartida solicitudPartida = new SolicitudPartida(Partida.getID(),_dataListJugadores,Partida.getAnfitrion());
 
-                DBrefUsuario.child(participante.getSolicitud_usuario()).child("SolicitudesPartidas").push().setValue(solicitudPartida);
+                DBrefUsuario.child(participante.getUserID()).child("Partidas").push().setValue(Partida.getID());
             }
 
 
@@ -171,107 +296,18 @@ public class CreacionPartida extends AppCompatActivity {
 
 
 
-
-        Intent i = new Intent(this, LobbyPartidasActivity.class);
+        LISTA_JUGADORES_SALA.clear();
+        Intent i = new Intent(this, MenuPrincipalActivityNavDrawer.class);
         startActivity(i);
         finish();
     }
 
     public void Back(View v){
-        Intent i = new Intent(CreacionPartida.this,LobbyPartidasActivity.class);
+        LISTA_JUGADORES_SALA.clear();
+        Intent i = new Intent(CreacionPartida.this,MenuPrincipalActivityNavDrawer.class);
         startActivity(i);
         finish();
     }
 
-    private class List_Adapter_Add extends ArrayAdapter<LV_Usuario> {
 
-        private List<LV_Usuario> mList;
-        private Context mContext;
-        private int resourceLayout;
-
-        public List_Adapter_Add(@NonNull Context context, int resource, @NonNull List<LV_Usuario> objects) {
-            super(context, resource, objects);
-            this.mList = objects;
-            this.mContext = context;
-            this.resourceLayout = resource;
-
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View view = convertView;
-            if(view == null){
-                view = LayoutInflater.from(mContext).inflate(resourceLayout,null);
-            }
-            final LV_Usuario modelo = mList.get(position);
-
-            TextView tvParticip= view.findViewById(R.id.tvParticip);
-            tvParticip.setText(modelo.getSolicitud_usuario());
-
-            ImageButton btnAdd = view.findViewById(R.id.btnAddParticipante);
-
-            btnAdd.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(_dataListJugadores.size()==3){
-                        Toast.makeText(CreacionPartida.this,"El grupo no puede tener más participantes",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    _dataListJugadores.add(modelo);
-                    _adapterAmigosRemove.notifyDataSetChanged();
-                    _dataListAmigosAdd.remove(modelo);
-                    _adapterAmigosAdd.notifyDataSetChanged();
-                }
-            });
-
-
-            return view;
-        }
-    }
-
-    private class List_Adapter_Remove extends ArrayAdapter<LV_Usuario> {
-
-        private List<LV_Usuario> mList;
-        private Context mContext;
-        private int resourceLayout;
-
-        public List_Adapter_Remove(@NonNull Context context, int resource, @NonNull List<LV_Usuario> objects) {
-            super(context, resource, objects);
-            this.mList = objects;
-            this.mContext = context;
-            this.resourceLayout = resource;
-
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View view = convertView;
-            if(view == null){
-                view = LayoutInflater.from(mContext).inflate(resourceLayout,null);
-            }
-            final LV_Usuario modelo = mList.get(position);
-
-            TextView tvParticip= view.findViewById(R.id.tvParticipp);
-            tvParticip.setText(modelo.getSolicitud_usuario());
-
-            ImageButton btnRemove = view.findViewById(R.id.btnRemoveParticipante);
-
-            btnRemove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    _dataListJugadores.remove(modelo);
-                    _adapterAmigosRemove.notifyDataSetChanged();
-                    _dataListAmigosAdd.add(modelo);
-                    _adapterAmigosAdd.notifyDataSetChanged();
-                }
-            });
-
-
-
-
-            return view;
-        }
-    }
 }
