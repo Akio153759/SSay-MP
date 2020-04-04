@@ -16,11 +16,12 @@
         android:layout_gravity="start"
         android:layout_marginTop="55dp"
 
-        android:fitsSystemWindows="true"
         android:background="@drawable/rounded_fg_nav_drawer"
-        app:theme="@style/Menu"
+        android:clickable="true"
+        android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_menu_principal_activity_nav_drawer"
-        app:menu="@menu/activity_menu_principal_nav_drawer_drawer" />
+        app:menu="@menu/activity_menu_principal_nav_drawer_drawer"
+        app:theme="@style/Menu" />
 
     <include
         layout="@layout/app_bar_menu_principal_activity_nav_drawer"

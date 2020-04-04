@@ -1,85 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".AmigosActivity">
 
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:elevation="4dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimaryDark"
+        app:popupTheme="@style/AppTheme.PopupOverlay">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:tint="@android:color/white"
+                android:onClick="Regresar"
+                app:srcCompat="@drawable/ic_back" />
+            <TextView
+                android:layout_width="0dp"
+                android:textColor="#FFFFFF"
+                android:layout_height="match_parent"
+                android:layout_weight="10"
+                android:text="Amigos"
+                android:fontFamily="@font/amaranth_bold_italic"
+                android:paddingLeft="30dp"
+                android:textSize="24sp"
+                android:gravity="center_vertical"/>
+
+        </LinearLayout>
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
         android:orientation="vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/listaAmigos"
-                android:layout_marginBottom="10dp"/>
-
-            <ListView
-                android:id="@+id/lvAmigos"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="10dp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/solicitudesAmigos"
-                android:layout_marginBottom="10dp"/>
-            <ListView
-                android:id="@+id/lvSolicitudes"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="10dp"/>
-
-        </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@drawable/bg_search_friend_pcolor"
+            android:layout_height="0dp"
+            android:layout_weight="1.3"
+            android:elevation="2dp"
+            android:layout_marginBottom="10dp"
+            >
 
             <ImageButton
-                android:id="@+id/btnVolver"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:background="@android:color/transparent"
+                android:tint="@android:color/white"
+                android:src="@drawable/ic_find" />
 
+            <EditText
+                android:id="@+id/etSearchFriend"
+                android:layout_width="0dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
+                android:layout_marginRight="10dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8"
+                android:inputType="text"
+                android:textStyle="italic"
+                android:hint="Buscar en mis amigos"/>
 
-                android:onClick="Regresar"
-                android:src="@android:drawable/ic_menu_revert" />
+        </LinearLayout>
 
-            <Button
-                android:id="@+id/btnSearchUser"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:onClick="BuscarAmigo"
-                android:layout_marginLeft="60dp"
-                android:text="Buscar amigo"
-                android:layout_toRightOf="@+id/btnVolver"/>
-        </RelativeLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_amigos"
+            android:layout_width="match_parent"
 
+            android:layout_height="0dp"
+            android:padding="10dp"
+            android:layout_weight="11.9"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fontFamily="@font/amaranth_bold_italic"
+            android:elevation="4dp"
+            android:textSize="22sp"
+            android:onClick="AddNewFriend"
+            android:textColor="@android:color/white"
+            android:background="@drawable/eff_btn_primary_dark"
+            android:text="Añadir nuevo amigo"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1.1"/>
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

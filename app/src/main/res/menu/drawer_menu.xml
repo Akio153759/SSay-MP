@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item
+        android:id="@+id/nav_game_history"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:title="Mi perfil" />
+
+    <item android:title="Social">
+        <menu>
+            <item
+                android:id="@+id/nav_friends"
+                android:icon="@drawable/ic_friends"
+                android:title="Amigos" />
+            <item
+                android:id="@+id/nav_new_request"
+                android:icon="@drawable/ic_new_friend_request"
+                android:title="Solicitudes nuevas" />
+        </menu>
+    </item>
+
+    <item android:title="Ayuda">
+        <menu>
+            <item
+                android:id="@+id/nav_preferences"
+                android:icon="@drawable/ic_preferences"
+                android:title="Preferencias" />
+            <item
+                android:id="@+id/nav_how_to_play"
+                android:icon="@drawable/ic_how_to_play"
+                android:title="¿Cómo jugar?" />
+        </menu>
+    </item>
+
+</menu>

@@ -134,6 +134,7 @@ public class CreacionPartida extends AppCompatActivity {
                             break;
                     }
                 }
+                _adapterAmigosAdd.notifyDataSetChanged();
             }
 
             @Override
@@ -228,6 +229,7 @@ public class CreacionPartida extends AppCompatActivity {
     public void ConfirmarPartida(View view){
         if(LISTA_JUGADORES_SALA.size() < 2){
             Snackbar.make(view,R.string.msg_error_min_opponent,Snackbar.LENGTH_LONG).show();
+
             return;
         }
 
@@ -287,24 +289,32 @@ public class CreacionPartida extends AppCompatActivity {
             }
 
 
-            Toast.makeText(this,"Partida creada con éxito",Toast.LENGTH_SHORT).show();
+
 
         }
         catch (Exception e){
-            Toast.makeText(this,"Ocurrió un error al crear partida",Toast.LENGTH_SHORT).show();
+            Toast.makeText(CreacionPartida.this,"Ocurrió un error al crear partida",Toast.LENGTH_LONG).show();
         }
 
 
 
         LISTA_JUGADORES_SALA.clear();
-        Intent i = new Intent(this, MenuPrincipalActivityNavDrawer.class);
+        Intent i = new Intent(this, InicioActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        LISTA_JUGADORES_SALA.clear();
+        Intent i = new Intent(CreacionPartida.this,InicioActivity.class);
         startActivity(i);
         finish();
     }
 
     public void Back(View v){
         LISTA_JUGADORES_SALA.clear();
-        Intent i = new Intent(CreacionPartida.this,MenuPrincipalActivityNavDrawer.class);
+        Intent i = new Intent(CreacionPartida.this,InicioActivity.class);
         startActivity(i);
         finish();
     }

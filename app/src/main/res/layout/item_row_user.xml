@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_marginBottom="10dp"
+    android:padding="4dp"
+    android:elevation="3dp"
+    android:background="@drawable/bg_search_friend_white"
+    android:layout_height="75dp">
+
+    <ImageView
+        android:id="@+id/ivProfileImage"
+        android:layout_width="45dp"
+        android:foreground="@drawable/circle_icon_white"
+        android:layout_height="45dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="5dp"
+        android:layout_gravity="center"
+        app:srcCompat="@mipmap/ic_launcher_round" />
+
+
+    <TextView
+        android:id="@+id/lblNick"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/amaranth_bold_italic"
+        android:gravity="center_vertical"
+
+        android:textSize="18sp"
+        android:text="JaviJavi Javi"
+        android:layout_weight="4"/>
+
+
+
+    <ImageButton
+        android:id="@+id/ibAddFriend"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+
+        android:layout_marginRight="5dp"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/colorPrimary"
+        android:background="@drawable/ic_person_add_black_24dp" />
+
+</LinearLayout>

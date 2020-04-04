@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 import com.tamadev.ssay_mp.CreacionPartida;
 import com.tamadev.ssay_mp.R;
@@ -36,7 +37,7 @@ public class RVAdapterFriends extends RecyclerView.Adapter<RVAdapterFriends.View
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         Picasso.with(mContext).load(_dataListAmigosAdd.get(position).getUrlImageProfile()).error(R.mipmap.ic_launcher).fit().centerInside().into(holder.ivPhotoFriend);
         holder.lblUserFriend.setText(_dataListAmigosAdd.get(position).getUserID());
 
@@ -45,7 +46,8 @@ public class RVAdapterFriends extends RecyclerView.Adapter<RVAdapterFriends.View
             public void onClick(View v) {
                 for(int i = 0; i < CreacionPartida.LISTA_JUGADORES_SALA.size(); i++){
                     if(CreacionPartida.LISTA_JUGADORES_SALA.get(i).getUserID().equals(_dataListAmigosAdd.get(position).getUserID())){
-                        Toast.makeText(mContext,"Ya añadiste este usuario",Toast.LENGTH_SHORT).show();
+
+                        Snackbar.make(holder.itemView,"Ya añadiste este usuario",Snackbar.LENGTH_LONG).show();
                         return;
                     }
                 }
@@ -73,7 +75,7 @@ public class RVAdapterFriends extends RecyclerView.Adapter<RVAdapterFriends.View
                     }
                 }
                 else {
-                    Toast.makeText(mContext,"Capacidad máxima en la sala", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(holder.itemView,"Capacidad máxima en la sala",Snackbar.LENGTH_LONG).show();
                 }
             }
         });

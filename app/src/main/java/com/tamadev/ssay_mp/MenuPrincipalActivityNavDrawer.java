@@ -61,6 +61,7 @@ public class MenuPrincipalActivityNavDrawer extends AppCompatActivity implements
     public static ArrayList<CrearPartida> _dataListPartidas;
     public static  RecyclerViewAdapter adapter;
 
+    private NavigationView navigationView;
     private ImageView ivProfilePhoto, ivLvlIcon, ivProfilePhotoBar;
     private ImageButton ibMore;
     private TextView tvNickName,tvNickNameBar , tvLvlTxt, tvProfileName;
@@ -79,16 +80,11 @@ public class MenuPrincipalActivityNavDrawer extends AppCompatActivity implements
         setContentView(R.layout.activity_menu_principal_nav_drawer);
         ivProfilePhotoBar = findViewById(R.id.ivProfilePhotoBar);
         tvNickNameBar = findViewById(R.id.tvProfileNickBar);
-
+        navigationView = findViewById(R.id.nav_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-
-
 
 
         // Passing each menu ID as a set of Ids because each
@@ -148,7 +144,31 @@ public class MenuPrincipalActivityNavDrawer extends AppCompatActivity implements
         tvNickName = mAppBarConfiguration.getDrawerLayout().findViewById(R.id.tvProfileNick);
         tvProfileName = mAppBarConfiguration.getDrawerLayout().findViewById(R.id.tvProfileName);
 
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.nav_home:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, new HomeFragment()).commit();
+                        break;
+                    case R.id.nav_gallery:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, new GalleryFragment()).commit();
+                        break;
+                    case R.id.nav_slideshow:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, new SlideshowFragment()).commit();
+                        break;
+                    case R.id.nav_tools:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, new ToolsFragment()).commit();
+                        break;
+                    case R.id.nav_share:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, new ShareFragment()).commit();
+                        break;
+                }
 
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(MenuPrincipalActivityNavDrawer.this,LinearLayoutManager.HORIZONTAL,false);
         RecyclerView recyclerView = findViewById(R.id.my_recycler_view);

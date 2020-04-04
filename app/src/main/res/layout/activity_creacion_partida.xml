@@ -8,29 +8,41 @@
     android:orientation="vertical"
     tools:context=".CreacionPartida">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2">
+        android:elevation="4dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimaryDark"
+        app:popupTheme="@style/AppTheme.PopupOverlay">
 
-        <ImageButton
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:background="@android:color/transparent"
-            android:onClick="Back"
-            android:src="@android:drawable/ic_menu_revert" />
-        <TextView
-            android:layout_width="0dp"
-            android:textSize="24sp"
-            android:gravity="center_vertical"
-            android:text="Creando sala"
-            android:layout_height="match_parent"
-            android:layout_weight="9"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="Back"
+                android:tint="@android:color/white"
+                app:srcCompat="@drawable/ic_back" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="10"
+                android:textColor="#FFFFFF"
+                android:text="Creando partida"
+                android:fontFamily="@font/amaranth_bold_italic"
+                android:paddingLeft="30dp"
+                android:textSize="24sp"
+                android:gravity="center_vertical"/>
+
+        </LinearLayout>
 
 
-    </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
 
 
     <LinearLayout
@@ -42,8 +54,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:background="@drawable/bg_search_friend"
+            android:background="@drawable/bg_search_friend_pcolor"
             android:layout_height="0dp"
+            android:elevation="2dp"
             android:layout_weight="1.5"
             android:layout_margin="10dp">
 
@@ -51,11 +64,14 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1.5"
+                android:tint="@android:color/white"
                 android:background="@android:color/transparent"
-                android:src="@android:drawable/ic_menu_search" />
+                android:src="@drawable/ic_find" />
             <EditText
                 android:id="@+id/etSearchFriend"
                 android:layout_width="0dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
                 android:layout_marginRight="10dp"
                 android:layout_height="match_parent"
                 android:layout_weight="8"
@@ -85,8 +101,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:gravity="center"
-                android:textStyle="italic"
-                android:textSize="26sp"
+                android:fontFamily="@font/amaranth_bold_italic"
+                android:textSize="28sp"
+                android:textColor="@color/colorPrimaryDark"
                 android:layout_marginBottom="10dp"
                 android:text="Partida de ElAko"
                 android:layout_weight="1"/>
@@ -105,6 +122,7 @@
                     <ImageView
                         android:id="@+id/ivAnfitrion"
                         android:layout_width="63dp"
+                        android:elevation="4dp"
                         android:layout_gravity="center"
                         android:layout_height="0dp"
                         android:layout_weight="5"
@@ -131,6 +149,7 @@
                     <ImageView
                         android:id="@+id/ivPlayer2"
                         android:layout_width="63dp"
+                        android:elevation="4dp"
                         android:layout_gravity="center"
                         android:layout_height="0dp"
                         android:layout_weight="5"
@@ -173,6 +192,7 @@
                         android:id="@+id/ivPlayer3"
                         android:layout_width="63dp"
                         android:layout_gravity="center"
+                        android:elevation="4dp"
                         android:layout_height="0dp"
                         android:layout_weight="5"
                         android:foreground="@drawable/circle_icon_white"
@@ -198,6 +218,7 @@
                         android:id="@+id/ivPlayer4"
                         android:layout_width="63dp"
                         android:layout_gravity="center"
+                        android:elevation="4dp"
                         android:layout_height="0dp"
                         android:layout_weight="5"
                         android:foreground="@drawable/circle_icon_white"
@@ -222,6 +243,11 @@
             android:layout_margin="10dp"
             android:layout_weight="2.3"
             android:onClick="ConfirmarPartida"
+            android:fontFamily="@font/amaranth_bold_italic"
+            android:elevation="4dp"
+            android:textSize="22sp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/eff_btn_primary_dark"
             android:text="Crear partida" />
 
 

@@ -3,18 +3,23 @@ package com.tamadev.ssay_mp;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -22,88 +27,103 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.tamadev.ssay_mp.classes.LV_Usuario;
 import com.tamadev.ssay_mp.classes.Perfil;
+import com.tamadev.ssay_mp.classes.UserFriendProfile;
 import com.tamadev.ssay_mp.classes.UsuarioEnFirebase;
+import com.tamadev.ssay_mp.utils.AlertDialogNewFriend;
 import com.tamadev.ssay_mp.utils.AlertDialogSearchUser;
+import com.tamadev.ssay_mp.utils.RVAdapterFriendList;
+import com.tamadev.ssay_mp.utils.RVAdapterUserList;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import database.SQLiteDB;
-
 public class AmigosActivity extends AppCompatActivity {
-    private SQLiteDB helper = new SQLiteDB(AmigosActivity.this,"db",null,1);
-    private ListView lvAmigos, lvSolicitudes;
-    private EditText etSearchAmigos;
-    private Button btnEnviarSolicitud;
-    private TextView tvResultadoBusqueda;
-    private DatabaseReference dbref;
-    private String _sUsuarioAgregar, _sNombreAgregar;
-    private List_Adapter _lSolicitudesAdapter;
-    private ArrayList<UsuarioEnFirebase> _lSolicitudes;
-    private ArrayList<String> _lAmigos;
-    private ArrayAdapter<String> _lamigosAdapter;
-    private DatabaseReference DBrefUsuario ;
 
 
 
+    private ArrayList<UsuarioEnFirebase> _dataListIDAmigos = new ArrayList<>();
+
+    public static ArrayList<UserFriendProfile> _dataListAmigos = new ArrayList<>();
+    public static DatabaseReference DBrefUsuarioFriends;
+    public static ArrayList<String> _dataListSolicitudesEnviadas = new ArrayList<>();
+    public static ArrayList<UserFriendProfile> _dataListAllUsers;
+    public static ArrayList<UserFriendProfile> _dataListAllUsersFilter;
 
 
+    private ArrayList<UserFriendProfile> _dataListAmigosFilter = new ArrayList<>();
+    private ArrayList<UsuarioEnFirebase> _dataListIDAmigosFilter = new ArrayList<>();
+    private RecyclerView recyclerView;
+    public static EditText etSearchFriend;
+    private LinearLayoutManager layoutManager;
+    private RVAdapterFriendList adapterFriendList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        AlertDialogNewFriend.adapterUserList = new RVAdapterUserList(_dataListAllUsersFilter,AmigosActivity.this);
+
         setContentView(R.layout.activity_amigos);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        lvAmigos = (ListView)findViewById(R.id.lvAmigos);
-        lvSolicitudes = (ListView)findViewById(R.id.lvSolicitudes);
+        recyclerView = findViewById(R.id.rv_amigos);
+        etSearchFriend = findViewById(R.id.etSearchFriend);
 
 
-        _lAmigos = new ArrayList<>();
-        _lamigosAdapter = new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, _lAmigos);
-        _lamigosAdapter.setNotifyOnChange(true);
-        lvAmigos.setAdapter(_lamigosAdapter);
 
-        _lSolicitudes = new ArrayList<>();
-        _lSolicitudesAdapter = new List_Adapter(this,R.layout.item_row_solicitudes,_lSolicitudes);
-        _lSolicitudesAdapter.setNotifyOnChange(true);
-        lvSolicitudes.setAdapter(_lSolicitudesAdapter);
 
-        DBrefUsuario = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(Perfil.USER_ID);
-        /*
-        etSearchAmigos = (EditText)findViewById(R.id.etSearchAmigos);
+        layoutManager = new LinearLayoutManager(AmigosActivity.this,LinearLayoutManager.VERTICAL,false);
 
-        tvResultadoBusqueda = (TextView)findViewById(R.id.tvResultadoBusqueda);
 
-        btnEnviarSolicitud = (Button)findViewById(R.id.btnEnviarSolicitud);
-*/
-        DBrefUsuario.addValueEventListener(new ValueEventListener() {
+        adapterFriendList = new RVAdapterFriendList(_dataListAmigosFilter,_dataListIDAmigosFilter,AmigosActivity.this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapterFriendList);
+
+
+
+
+
+        DBrefUsuarioFriends.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot Nodos) {
-                _lSolicitudes.clear();
-                _lAmigos.clear();
-                for(DataSnapshot nodo: Nodos.getChildren()){
+                _dataListAmigos.clear();
+                _dataListIDAmigos.clear();
+                _dataListAmigosFilter.clear();
+                _dataListIDAmigosFilter.clear();
+                for(DataSnapshot nodo: Nodos.child(Perfil.USER_ID).getChildren()){
                     switch (nodo.getKey()){
-                        case "SolicitudesAmistad":
-
-                            for(DataSnapshot solicitud: nodo.getChildren()){
-
-                                _lSolicitudes.add(new UsuarioEnFirebase(solicitud.getKey(),solicitud.getValue().toString()));
-                            }
-
-                            break;
                         case "Amigos":
-
-                            for(DataSnapshot amigo: nodo.getChildren()) {
-
-                                _lAmigos.add(amigo.getValue().toString());
+                            for(DataSnapshot amigo: nodo.getChildren()){
+                                _dataListIDAmigos.add(new UsuarioEnFirebase(amigo.getKey(),amigo.getValue().toString()));
+                                UserFriendProfile _objFriend = new UserFriendProfile(Nodos.child(amigo.getValue().toString()).
+                                        child("Perfil").
+                                        child("usuario").getValue().toString(),
+                                        Nodos.child(amigo.getValue().toString()).
+                                                child("Perfil").
+                                                child("urlProfileImage").getValue().toString());
+                                _dataListAmigos.add(_objFriend);
                             }
-
+                            for (UserFriendProfile ufp: _dataListAmigos){
+                                _dataListAmigosFilter.add(ufp);
+                            }
+                            for (UsuarioEnFirebase uf: _dataListIDAmigos){
+                                _dataListIDAmigosFilter.add(uf);
+                            }
                             break;
+                        case "SolicitudesEnviadas":
+                            _dataListSolicitudesEnviadas.clear();
+                            for(DataSnapshot user: nodo.getChildren()){
+                                _dataListSolicitudesEnviadas.add(user.getValue().toString());
+                            }
                     }
                 }
-                _lSolicitudesAdapter.notifyDataSetChanged();
-                _lamigosAdapter.notifyDataSetChanged();
+                adapterFriendList.notifyDataSetChanged();
+                AlertDialogNewFriend.adapterUserList.notifyDataSetChanged();
             }
 
             @Override
@@ -112,11 +132,63 @@ public class AmigosActivity extends AppCompatActivity {
             }
         });
 
+        etSearchFriend.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(etSearchFriend.getText().toString().equalsIgnoreCase("")){
+                    _dataListAmigosFilter.clear();
+                    _dataListIDAmigosFilter.clear();
+                    for (UserFriendProfile ufp: _dataListAmigos){
+                        _dataListAmigosFilter.add(ufp);
+                    }
+                    for(UsuarioEnFirebase uf: _dataListIDAmigos){
+                        _dataListIDAmigosFilter.add(uf);
+                    }
+                    adapterFriendList.notifyDataSetChanged();
+                    return;
+                }
+                _dataListAmigosFilter.clear();
+                _dataListIDAmigosFilter.clear();
+                for (UserFriendProfile friendFilter: _dataListAmigos){
+                    if (friendFilter.getUserID().toLowerCase().contains(etSearchFriend.getText().toString().toLowerCase())){
+                        _dataListAmigosFilter.add(friendFilter);
+                    }
+                }
+                for (UsuarioEnFirebase friendFilter: _dataListIDAmigos){
+                    if (friendFilter.getUsuario().toLowerCase().contains(etSearchFriend.getText().toString().toLowerCase())){
+                        _dataListIDAmigosFilter.add(friendFilter);
+                    }
+                }
+
+                adapterFriendList.notifyDataSetChanged();
+            }
+        });
 
     }
+
+    public void AddNewFriend(View view){
+        new AlertDialogNewFriend(AmigosActivity.this);
+    }
+
     public void Regresar(View view){
-        Intent i = new Intent(this, MenuPrincipalActivity.class);
+        Intent i = new Intent(this, InicioActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(this, InicioActivity.class);
         startActivity(i);
         finish();
     }
@@ -264,22 +336,22 @@ public class AmigosActivity extends AppCompatActivity {
             btnAceptarSolicitud.setBackgroundResource(R.drawable.btnconfirmar);
             btnRechazarSolicitd.setBackgroundResource(R.drawable.btncancelar);
 
-            helper = new SQLiteDB(mContext,"db",null,1);
+
 
             btnAceptarSolicitud.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DBrefUsuario.child("Amigos").push().setValue(modelo.getUsuario());
+                    DBrefUsuarioFriends.child("Amigos").push().setValue(modelo.getUsuario());
                     DatabaseReference DBrefAmigo = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(modelo.getUsuario()).child("Amigos");
                     DBrefAmigo.push().setValue(Perfil.USER_ID);
-                    DBrefUsuario.child("SolicitudesAmistad").child(modelo.getId()).removeValue();
+                    DBrefUsuarioFriends.child("SolicitudesAmistad").child(modelo.getId()).removeValue();
                 }
             });
 
             btnRechazarSolicitd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DBrefUsuario.child("SolicitudesAmistad").child(modelo.getId()).removeValue();
+                    DBrefUsuarioFriends.child("SolicitudesAmistad").child(modelo.getId()).removeValue();
                 }
             });
 

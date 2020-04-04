@@ -7,30 +7,27 @@
     android:orientation="vertical"
     android:background="#136F64"
     android:gravity="bottom"
-    android:paddingBottom="100dp"
+    android:paddingBottom="70dp"
     tools:context=".SplashScreenActivity">
 
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        app:lottie_imageAssetsFolder="assets"
+        app:lottie_fileName="splashprogressanimation.json"
+        />
     <TextView
         android:id="@+id/tvPorcentaje"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:gravity="center"
         android:text="100%"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:fontFamily="@font/amaranth_bold_italic"
         />
-
-    <ProgressBar
-        android:id="@+id/pbCarga"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        />
-
 
 </LinearLayout>
