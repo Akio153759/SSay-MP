@@ -31,11 +31,13 @@ import com.tamadev.ssay_mp.classes.CrearPartida;
 import com.tamadev.ssay_mp.classes.Jugador;
 import com.tamadev.ssay_mp.classes.LV_Usuario;
 import com.tamadev.ssay_mp.classes.Perfil;
+import com.tamadev.ssay_mp.classes.Round;
 import com.tamadev.ssay_mp.classes.SolicitudPartida;
 import com.tamadev.ssay_mp.classes.UserFriendProfile;
 import com.tamadev.ssay_mp.utils.RVAdapterFriends;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import database.SQLiteDB;
 
@@ -255,11 +257,11 @@ public class CreacionPartida extends AppCompatActivity {
         ArrayList<Jugador> Jugadores = new ArrayList<>();
         for(UserFriendProfile jugador: LISTA_JUGADORES_SALA){
             if(jugador.getUserID().equals(Perfil.USER_ID)){
-                Jugadores.add(new Jugador(jugador.getUserID(),1,Perfil.URL_IMAGE_PROFILE.toString()));
+                Jugadores.add(new Jugador(jugador.getUserID(),1,Perfil.URL_IMAGE_PROFILE.toString(),3));
             }
             else{
 
-                Jugadores.add(new Jugador(jugador.getUserID(),0,jugador.getUrlImageProfile()));
+                Jugadores.add(new Jugador(jugador.getUserID(),0,jugador.getUrlImageProfile(),3));
             }
 
         }
@@ -270,6 +272,7 @@ public class CreacionPartida extends AppCompatActivity {
         Partida.setID(Partida.GenerarIDPartida(LISTA_JUGADORES_SALA.toString() + Secuencia.toString() + (int) (Math.random() * 999999)));
         Partida.setEstado(1);
         Partida.setAnfitrion(Perfil.USER_ID);
+        Partida.setRondas(new ArrayList<Round>());
 
         DBrefPartidas = FirebaseDatabase.getInstance().getReference().child("Partidas");
 

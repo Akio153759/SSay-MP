@@ -3,16 +3,30 @@ package com.tamadev.ssay_mp.classes;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 //Clase utilizada para crear el objeto de la partida y subirlo a Firebase
 
 public class CrearPartida {
+    private ArrayList<Round> rondas;
     private int cantidadJugadores;
     private ArrayList<Jugador> jugadores;
     private ArrayList <String> secuencia;
     private String proximoJugador;
     private String id;
     private String anfitrion;
+
+
+    public CrearPartida() {
+    }
+
+    public ArrayList<Round> getRondas() {
+        return rondas;
+    }
+
+    public void setRondas(ArrayList<Round> rondas) {
+        this.rondas = rondas;
+    }
 
     public int getEstado() {
         return Estado;
@@ -33,8 +47,7 @@ public class CrearPartida {
         this.id = ID;
     }
 
-    public CrearPartida() {
-    }
+
 
     public int getCantidadJugadores() {
         return cantidadJugadores;

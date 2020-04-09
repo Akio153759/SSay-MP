@@ -108,7 +108,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             public void onClick(View v) {
                 if(holder.lblTurno.getText().toString().equals("Jugar")){
                     Intent i = new Intent(mContext, MainActivity.class);
-                    i.putExtra("IDPartida",_dataListPartidas.get(position).getID());
+                    i.putExtra("IndexPartida",position);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     mContext.startActivity(i);
 
