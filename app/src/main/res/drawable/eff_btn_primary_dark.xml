@@ -9,7 +9,7 @@
                 android:right="1dp"
                 android:bottom="1dp"/>
 
-            <corners android:radius="100px"/>
+            <corners android:radius="40px"/>
 
 
 
@@ -24,7 +24,7 @@
                 android:right="5dp"
                 android:bottom="5dp"/>
 
-            <corners android:radius="100px"/>
+            <corners android:radius="40px"/>
 
 
 
@@ -39,7 +39,7 @@
                 android:right="1dp"
                 android:bottom="1dp"/>
 
-            <corners android:radius="30px"/>
+            <corners android:radius="40px"/>
 
 
 

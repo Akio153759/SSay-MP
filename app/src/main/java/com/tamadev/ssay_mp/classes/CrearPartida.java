@@ -1,5 +1,9 @@
 package com.tamadev.ssay_mp.classes;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -7,7 +11,7 @@ import java.util.HashMap;
 
 //Clase utilizada para crear el objeto de la partida y subirlo a Firebase
 
-public class CrearPartida {
+public class CrearPartida implements Parcelable {
     private ArrayList<Round> rondas;
     private int cantidadJugadores;
     private ArrayList<Jugador> jugadores;
@@ -15,10 +19,34 @@ public class CrearPartida {
     private String proximoJugador;
     private String id;
     private String anfitrion;
+    private int Estado;
 
 
     public CrearPartida() {
     }
+
+    protected CrearPartida(Parcel in) {
+        rondas = in.createTypedArrayList(Round.CREATOR);
+        cantidadJugadores = in.readInt();
+        jugadores = in.createTypedArrayList(Jugador.CREATOR);
+        secuencia = in.createStringArrayList();
+        proximoJugador = in.readString();
+        id = in.readString();
+        anfitrion = in.readString();
+        Estado = in.readInt();
+    }
+
+    public static final Creator<CrearPartida> CREATOR = new Creator<CrearPartida>() {
+        @Override
+        public CrearPartida createFromParcel(Parcel in) {
+            return new CrearPartida(in);
+        }
+
+        @Override
+        public CrearPartida[] newArray(int size) {
+            return new CrearPartida[size];
+        }
+    };
 
     public ArrayList<Round> getRondas() {
         return rondas;
@@ -37,7 +65,7 @@ public class CrearPartida {
         Estado = estado;
     }
 
-    private int Estado;
+
 
     public String getID() {
         return id;
@@ -110,5 +138,22 @@ public class CrearPartida {
 
     public void setAnfitrion(String anfitrion) {
         this.anfitrion = anfitrion;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeTypedList(rondas);
+        dest.writeInt(cantidadJugadores);
+        dest.writeTypedList(jugadores);
+        dest.writeStringList(secuencia);
+        dest.writeString(proximoJugador);
+        dest.writeString(id);
+        dest.writeString(anfitrion);
+        dest.writeInt(Estado);
     }
 }

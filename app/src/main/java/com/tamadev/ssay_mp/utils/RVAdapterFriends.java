@@ -39,6 +39,9 @@ public class RVAdapterFriends extends RecyclerView.Adapter<RVAdapterFriends.View
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         Picasso.with(mContext).load(_dataListAmigosAdd.get(position).getUrlImageProfile()).error(R.mipmap.ic_launcher).fit().centerInside().into(holder.ivPhotoFriend);
+        if(!_dataListAmigosAdd.get(position).isOnline()){
+            holder.ivOnline.setVisibility(View.INVISIBLE);
+        }
         holder.lblUserFriend.setText(_dataListAmigosAdd.get(position).getUserID());
 
         holder.ivPhotoFriend.setOnClickListener(new View.OnClickListener() {
@@ -88,11 +91,12 @@ public class RVAdapterFriends extends RecyclerView.Adapter<RVAdapterFriends.View
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        ImageView ivPhotoFriend;
+        ImageView ivPhotoFriend, ivOnline;
         TextView lblUserFriend;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            ivOnline = itemView.findViewById(R.id.ivOnline);
             ivPhotoFriend = itemView.findViewById(R.id.ivPhotoFriend);
             lblUserFriend = itemView.findViewById(R.id.lblUserFriend);
         }

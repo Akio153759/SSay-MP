@@ -66,6 +66,12 @@ public class AlertDialogIngreso {
                                }
                            }catch (Exception ex){
                                Perfil.USER_ID = input;
+                               Perfil.FIRST_PLACE_GAMES = 0;
+                               Perfil.SECOND_PLACE_GAMES = 0;
+                               Perfil.THIRD_PLACE_GAMES = 0;
+                               Perfil.QUARTER_PLACE_GAMES = 0;
+                               Perfil.MATCHES_PLAYED = 0;
+                               Perfil.MAX_SCORE = 0;
                                dialog.dismiss();
                                interfaz.ResultCallback(1);
                            }

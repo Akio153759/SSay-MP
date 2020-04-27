@@ -44,12 +44,12 @@
                     android:layout_height="match_parent"
 
                     android:layout_weight="4"
-                    android:fontFamily="@font/amaranth_bold_italic"
+                    android:fontFamily="@font/baloo_thambi"
                     android:gravity="center_vertical"
                     android:paddingLeft="8dp"
                     android:text="User"
                     android:textSize="24sp"
-                    android:textStyle="italic" />
+                    />
 
                 <ImageView
                     android:id="@+id/ivLvl"
@@ -66,7 +66,7 @@
                     android:paddingLeft="8dp"
                     android:textColor="@android:color/white"
                     android:text="18"
-                    android:fontFamily="@font/amaranth_bold_italic"
+                    android:fontFamily="@font/baloo_thambi"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     />
@@ -74,9 +74,7 @@
 
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -95,19 +93,19 @@
 
 
                 <Button
-                    android:layout_marginLeft="40dp"
-                    android:layout_marginRight="40dp"
                     android:id="@+id/button2"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:onClick="Jugar"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
                     android:layout_marginBottom="10dp"
-                    android:fontFamily="@font/amaranth_bold_italic"
-                    android:elevation="4dp"
-                    android:textSize="22sp"
-                    android:textColor="@android:color/white"
                     android:background="@drawable/eff_btn_primary_dark"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/baloo_thambi"
+                    android:onClick="Jugar"
                     android:text="Jugar"
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

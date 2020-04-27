@@ -24,7 +24,7 @@
         android:id="@+id/lblNick"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:fontFamily="@font/amaranth_bold_italic"
+        android:fontFamily="@font/baloo_thambi"
         android:gravity="center_vertical"
 
         android:textSize="18sp"

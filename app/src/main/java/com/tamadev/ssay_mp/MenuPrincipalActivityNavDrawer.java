@@ -229,7 +229,7 @@ public class MenuPrincipalActivityNavDrawer extends AppCompatActivity implements
                             for(DataSnapshot partida: nodo.getChildren()){
                                 ArrayList<UserFriendProfile> jugadores = new ArrayList<>();
                                 for(DataSnapshot jugador: nodo.child(partida.getKey()).child("jugadores").getChildren()){
-                                    jugadores.add(new UserFriendProfile(jugador.child("user").getValue().toString(),jugador.child("urlImageUser").getValue().toString()));
+                                    jugadores.add(new UserFriendProfile(jugador.child("user").getValue().toString(),jugador.child("urlImageUser").getValue().toString(),false));
                                 }
                                 SolicitudPartida sp = new SolicitudPartida(partida.getKey(),nodo.child(partida.getKey()).child("idPartida").getValue().toString(),jugadores,nodo.child(partida.getKey()).child("anfitrion").getValue().toString());
                                 _dataListSolicitudes.add(sp);

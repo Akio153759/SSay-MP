@@ -1,14 +1,34 @@
 package com.tamadev.ssay_mp.classes;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.HashMap;
 
-public class Round {
+public class Round implements Parcelable {
     private HashMap<String,Integer> score;
     private boolean finalizada;
 
     public Round() {
 
     }
+
+    protected Round(Parcel in) {
+        finalizada = in.readByte() != 0;
+        score = (HashMap<String, Integer>)in.readSerializable();
+    }
+
+    public static final Creator<Round> CREATOR = new Creator<Round>() {
+        @Override
+        public Round createFromParcel(Parcel in) {
+            return new Round(in);
+        }
+
+        @Override
+        public Round[] newArray(int size) {
+            return new Round[size];
+        }
+    };
 
     public HashMap<String, Integer> getScore() {
         return score;
@@ -24,5 +44,16 @@ public class Round {
 
     public void setFinalizada(boolean finalizada) {
         this.finalizada = finalizada;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte((byte) (finalizada ? 1 : 0));
+        dest.writeSerializable(score);
     }
 }

@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -29,15 +28,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.tamadev.ssay_mp.classes.CrearPartida;
 import com.tamadev.ssay_mp.classes.Jugador;
-import com.tamadev.ssay_mp.classes.LV_Usuario;
 import com.tamadev.ssay_mp.classes.Perfil;
 import com.tamadev.ssay_mp.classes.Round;
-import com.tamadev.ssay_mp.classes.SolicitudPartida;
 import com.tamadev.ssay_mp.classes.UserFriendProfile;
 import com.tamadev.ssay_mp.utils.RVAdapterFriends;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import database.SQLiteDB;
 
@@ -78,7 +74,7 @@ public class CreacionPartida extends AppCompatActivity {
         getSupportActionBar().hide();
         setContentView(R.layout.activity_creacion_partida);
 
-
+        Perfil.ACTIVITY_NAVIGATION = false;
 
         IV_ANFITRION_SALA = findViewById(R.id.ivAnfitrion);
         IV_P2_SALA = findViewById(R.id.ivPlayer2);
@@ -100,7 +96,7 @@ public class CreacionPartida extends AppCompatActivity {
 
         Picasso.with(CreacionPartida.this).load(Perfil.URL_IMAGE_PROFILE).error(R.mipmap.ic_launcher).fit().centerInside().into(IV_ANFITRION_SALA);
         LBL_ANFITRION_SALA.setText(Perfil.USER_ID);
-        LISTA_JUGADORES_SALA.add(new UserFriendProfile(Perfil.USER_ID,Perfil.URL_IMAGE_PROFILE.toString()));
+        LISTA_JUGADORES_SALA.add(new UserFriendProfile(Perfil.USER_ID,Perfil.URL_IMAGE_PROFILE.toString(),true));
         lblAnfitrion.setText("Partida de " + Perfil.USER_ID);
 
 
@@ -127,7 +123,11 @@ public class CreacionPartida extends AppCompatActivity {
                                                                                            child("usuario").getValue().toString(),
                                                                                             Nodos.child(amigo.getValue().toString()).
                                                                                                   child("Perfil").
-                                                                                                  child("urlProfileImage").getValue().toString());
+                                                                                                  child("urlProfileImage").getValue().toString(),
+                                                                                            Boolean.parseBoolean(
+                                                                                            Nodos.child(amigo.getValue().toString()).
+                                                                                            child("Perfil").
+                                                                                            child("enLinea").getValue().toString()));
                                 _dataListAmigosAdd.add(_objFriend);
                             }
                             for (UserFriendProfile ufp: _dataListAmigosAdd){
@@ -302,25 +302,49 @@ public class CreacionPartida extends AppCompatActivity {
 
 
         LISTA_JUGADORES_SALA.clear();
-        Intent i = new Intent(this, InicioActivity.class);
+        Perfil.ACTIVITY_NAVIGATION = true;
+        Intent i = new Intent(this, MainActivity.class);
+        i.putExtra("Partida", Partida);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
-        finish();
+
     }
 
     @Override
     public void onBackPressed() {
         LISTA_JUGADORES_SALA.clear();
+        Perfil.ACTIVITY_NAVIGATION = true;
         Intent i = new Intent(CreacionPartida.this,InicioActivity.class);
         startActivity(i);
         finish();
+
     }
 
     public void Back(View v){
         LISTA_JUGADORES_SALA.clear();
+        Perfil.ACTIVITY_NAVIGATION = true;
         Intent i = new Intent(CreacionPartida.this,InicioActivity.class);
         startActivity(i);
         finish();
+
     }
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(Perfil.ONLINE && !Perfil.ACTIVITY_NAVIGATION){
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(false);
+            Perfil.ONLINE = false;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!Perfil.ONLINE){
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(true);
+            Perfil.ONLINE = true;
+        }
+    }
 }

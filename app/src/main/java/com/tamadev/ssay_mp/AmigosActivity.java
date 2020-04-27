@@ -74,7 +74,7 @@ public class AmigosActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.rv_amigos);
         etSearchFriend = findViewById(R.id.etSearchFriend);
 
-
+        Perfil.ACTIVITY_NAVIGATION = false;
 
 
         layoutManager = new LinearLayoutManager(AmigosActivity.this,LinearLayoutManager.VERTICAL,false);
@@ -105,7 +105,11 @@ public class AmigosActivity extends AppCompatActivity {
                                         child("usuario").getValue().toString(),
                                         Nodos.child(amigo.getValue().toString()).
                                                 child("Perfil").
-                                                child("urlProfileImage").getValue().toString());
+                                                child("urlProfileImage").getValue().toString(),
+                                        Boolean.parseBoolean(
+                                        Nodos.child(amigo.getValue().toString()).
+                                                child("Perfil").
+                                                child("enLinea").getValue().toString()));
                                 _dataListAmigos.add(_objFriend);
                             }
                             for (UserFriendProfile ufp: _dataListAmigos){
@@ -181,13 +185,16 @@ public class AmigosActivity extends AppCompatActivity {
     }
 
     public void Regresar(View view){
+        Perfil.ACTIVITY_NAVIGATION = true;
         Intent i = new Intent(this, InicioActivity.class);
         startActivity(i);
         finish();
+
     }
 
     @Override
     public void onBackPressed() {
+        Perfil.ACTIVITY_NAVIGATION = true;
         Intent i = new Intent(this, InicioActivity.class);
         startActivity(i);
         finish();
@@ -360,5 +367,24 @@ public class AmigosActivity extends AppCompatActivity {
     }
     public void BuscarAmigo(View view){
         new AlertDialogSearchUser(AmigosActivity.this);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(Perfil.ONLINE && !Perfil.ACTIVITY_NAVIGATION){
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(false);
+            Perfil.ONLINE = false;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!Perfil.ONLINE){
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(true);
+            Perfil.ONLINE = true;
+        }
     }
 }

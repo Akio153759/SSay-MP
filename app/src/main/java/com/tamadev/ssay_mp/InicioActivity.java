@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +19,6 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -28,15 +26,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.picasso.Picasso;
 import com.tamadev.ssay_mp.classes.CrearPartida;
 import com.tamadev.ssay_mp.classes.Perfil;
 import com.tamadev.ssay_mp.classes.RequestFriend;
 import com.tamadev.ssay_mp.classes.SolicitudPartida;
 import com.tamadev.ssay_mp.classes.UserFriendProfile;
-import com.tamadev.ssay_mp.inicio_fragments.FriendsFragment;
-import com.tamadev.ssay_mp.inicio_fragments.GameFragment;
-import com.tamadev.ssay_mp.inicio_fragments.GameHistoryFragment;
 import com.tamadev.ssay_mp.utils.AlertDialogNewRequestFriend;
 import com.tamadev.ssay_mp.utils.RVAdapterRequestFriend;
 import com.tamadev.ssay_mp.utils.RecyclerViewAdapter;
@@ -46,7 +44,9 @@ import java.util.ArrayList;
 public class InicioActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     public static DatabaseReference DBrefUsuario;
+    private DatabaseReference DBrefProfileUser;
     public static ArrayList<CrearPartida> _dataListPartidas;
+    public static ArrayList<CrearPartida> _dataListPartidasInactivas;
     public static DatabaseReference DBrefFriendRequest;
     public static RecyclerViewAdapter adapter;
     public static ArrayList<RequestFriend> _dataListNewRequestFriend = new ArrayList<>();
@@ -71,6 +71,12 @@ public class InicioActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inicio);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+        Perfil.ACTIVITY_NAVIGATION = false;
+
+        if(!Perfil.ONLINE){
+            DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(true);
+            Perfil.ONLINE = true;
+        }
 
 
         setSupportActionBar(toolbar);
@@ -81,7 +87,7 @@ public class InicioActivity extends AppCompatActivity {
         InicioActivity.DBrefFriendRequest = FirebaseDatabase.getInstance().getReference().child("Usuarios");
 
 
-
+        DBrefProfileUser = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(Perfil.USER_ID).child("Perfil");
 
         layoutManager = new LinearLayoutManager(InicioActivity.this,LinearLayoutManager.HORIZONTAL,false);
 
@@ -103,12 +109,16 @@ public class InicioActivity extends AppCompatActivity {
                         navigationView.setCheckedItem(-1);
                         break;
                     case R.id.nav_friends:
+                        Perfil.ACTIVITY_NAVIGATION = true;
                         Intent i = new Intent(InicioActivity.this,AmigosActivity.class);
                         startActivity(i);
                         finish();
                         break;
                     case R.id.nav_game_history:
-                        // Aca va al historial de partidas
+                        Perfil.ACTIVITY_NAVIGATION = true;
+                        Intent u = new Intent(InicioActivity.this,PerfilActivity.class);
+                        startActivity(u);
+                        finish();
                         break;
                     case R.id.nav_preferences:
                         // Aca va a la pantalla de preferencias
@@ -121,6 +131,8 @@ public class InicioActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -170,13 +182,33 @@ public class InicioActivity extends AppCompatActivity {
         ivProfilePhoto = findViewById(R.id.ivProfilePhoto);
         tvNickName = findViewById(R.id.tvProfileNick);
         tvProfileName = findViewById(R.id.tvProfileName);
+        tvLvlTxt = findViewById(R.id.tvLvl);
 
+        DBrefProfileUser.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                Perfil.MATCHES_PLAYED = Integer.parseInt(dataSnapshot.child("partidasJugadas").getValue().toString());
+                Perfil.MAX_SCORE = Integer.parseInt(dataSnapshot.child("maxScore").getValue().toString());
+                Perfil.FIRST_PLACE_GAMES = Integer.parseInt(dataSnapshot.child("partidasPrimerPuesto").getValue().toString());
+                Perfil.SECOND_PLACE_GAMES = Integer.parseInt(dataSnapshot.child("partidasSegundoPuesto").getValue().toString());
+                Perfil.THIRD_PLACE_GAMES = Integer.parseInt(dataSnapshot.child("partidasTercerPuesto").getValue().toString());
+                Perfil.QUARTER_PLACE_GAMES = Integer.parseInt(dataSnapshot.child("partidasCuartoPuesto").getValue().toString());
+
+                tvLvlTxt.setText(String.valueOf(Perfil.FIRST_PLACE_GAMES));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
         tvProfileName.setText(Perfil.NAME);
         tvNickName.setText(Perfil.USER_ID);
         tvNickNameBar.setText(Perfil.USER_ID);
+
 
         Picasso.with(this).load(Perfil.URL_IMAGE_PROFILE).error(R.mipmap.ic_launcher).fit().centerInside().into(ivProfilePhoto);
         Picasso.with(this).load(Perfil.URL_IMAGE_PROFILE).error(R.mipmap.ic_launcher).fit().centerInside().into(ivProfilePhotoBar);
@@ -195,8 +227,35 @@ public class InicioActivity extends AppCompatActivity {
     }
 
     public void Jugar(View view){
-        Intent i = new Intent(InicioActivity.this,CreacionPartida.class);
-        startActivity(i);
-        finish();
+        FirebaseMessaging fm = FirebaseMessaging.getInstance();
+        fm.send(new RemoteMessage.Builder(FirebaseInstanceId.getInstance().getId() + "@fcm.googleapis.com")
+                .setMessageId(FirebaseInstanceId.getInstance().getToken())
+                .addData("my_message", "Hello World")
+                .addData("my_action","SAY_HELLO")
+                .build());
+
+
+
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if(Perfil.ONLINE && !Perfil.ACTIVITY_NAVIGATION){
+            DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(false);
+            Perfil.ONLINE = false;
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!Perfil.ONLINE){
+            DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(true);
+            Perfil.ONLINE = true;
+        }
     }
 }

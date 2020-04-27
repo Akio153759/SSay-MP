@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_marginBottom="10dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="4dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+
+    android:elevation="3dp"
+    android:background="@drawable/bg_search_friend_white"
+    android:layout_height="75dp">
+
+    <ImageView
+        android:id="@+id/ivPosition"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="15dp"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/medallabronce" />
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:background="@drawable/bg_search_friend_pcolor_light"
+        android:padding="5dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="0dp"
+
+                android:elevation="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/lbl1ro"
+                    android:layout_width="0dp"
+                    android:textColor="#D6BF25"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:fontFamily="@font/amaranth_bold_italic"
+                    android:text="1ro"/>
+                <TextView
+                    android:id="@+id/lblNick1ro"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:text="-"
+                    android:gravity="center_vertical"
+                    android:textColor="#D6BF25"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/amaranth_bold_italic"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:elevation="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/lbl2do"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:textSize="12sp"
+                    android:textColor="#257BD6"
+                    android:fontFamily="@font/amaranth_bold_italic"
+                    android:text="2do"/>
+                <TextView
+                    android:id="@+id/lblNick2do"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:text="-"
+                    android:textColor="#257BD6"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/amaranth_bold_italic"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:elevation="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="0dp"
+                    android:id="@+id/lbl3ro"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:textColor="#3ECC30"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:fontFamily="@font/amaranth_bold_italic"
+                    android:text="3ro"/>
+                <TextView
+                    android:id="@+id/lblNick3ro"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:textColor="#3ECC30"
+                    android:text="-"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/amaranth_bold_italic"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:elevation="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/lbl4to"
+                    android:layout_width="0dp"
+                    android:textSize="12sp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:textColor="#CC3054"
+                    android:gravity="center_vertical"
+                    android:fontFamily="@font/amaranth_bold_italic"
+                    android:text="4to"/>
+                <TextView
+                    android:id="@+id/lblNick4to"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:textSize="12sp"
+                    android:textColor="#CC3054"
+                    android:text="-"
+                    android:fontFamily="@font/amaranth_bold_italic"
+                    android:gravity="center_vertical"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+        <Button
+            android:id="@+id/btnViewMore"
+            android:layout_width="0dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/amaranth_bold_italic"
+            android:elevation="4dp"
+            android:textSize="12sp"
+            android:layout_gravity="center"
+            android:textColor="@android:color/white"
+            android:background="@drawable/eff_btn_primary_dark"
+            android:text="Ver mas"
+            android:layout_weight=".8"/>
+
+
+
+</LinearLayout>

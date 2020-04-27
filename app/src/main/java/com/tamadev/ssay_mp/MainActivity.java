@@ -3,15 +3,11 @@ package com.tamadev.ssay_mp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
-import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -31,13 +27,10 @@ import com.tamadev.ssay_mp.classes.Jugador;
 import com.tamadev.ssay_mp.classes.Perfil;
 import com.tamadev.ssay_mp.classes.Round;
 import com.tamadev.ssay_mp.utils.AlertDialogTwoButtons;
-import com.tamadev.ssay_mp.utils.AnimatorController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import database.SQLiteDB;
 
 public class MainActivity extends AppCompatActivity implements AlertDialogTwoButtons.AlertDialogTwoButtonsCallback {
 
@@ -74,13 +67,15 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
-        _iIndexPartida = extras.getInt("IndexPartida");
+        _objPartida = extras.getParcelable("Partida");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
+
+        Perfil.ACTIVITY_NAVIGATION = false;
 
         myScore = findViewById(R.id.myScore);
 
@@ -126,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
         btnBottom = (Button)findViewById(R.id.btnBottom);
         btnRight = (Button)findViewById(R.id.btnRight);
 
-        _objPartida = InicioActivity._dataListPartidas.get(_iIndexPartida);
+
 
 
         ivPlayer1.setVisibility(View.INVISIBLE);
@@ -179,6 +174,8 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                     ivStarP1.setVisibility(View.VISIBLE);
                     scoreP1.setVisibility(View.VISIBLE);
 
+                    scoreP1.setText("-");
+
                     if(_objJugador.getVidas()==0){
                         P1VidaN1.setImageTintList(getResources().getColorStateList(R.color.btn_rojo_press));
                         P1VidaN2.setImageTintList(getResources().getColorStateList(R.color.btn_rojo_press));
@@ -206,9 +203,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                             if (player.getKey().equals(_objJugador.getUser())){
                                 scoreP1.setText(String.valueOf(player.getValue()));
                             }
-                            else {
-                                scoreP1.setText("-");
-                            }
+
                         }
                     }
                     break;
@@ -222,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                     P2VidaN3.setVisibility(View.VISIBLE);
                     ivStarP2.setVisibility(View.VISIBLE);
                     scoreP2.setVisibility(View.VISIBLE);
+                    scoreP2.setText("-");
 
                     if(_objJugador.getVidas()==0){
                         P2VidaN1.setImageTintList(getResources().getColorStateList(R.color.btn_rojo_press));
@@ -250,9 +246,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                             if (player.getKey().equals(_objJugador.getUser())){
                                 scoreP2.setText(String.valueOf(player.getValue()));
                             }
-                            else {
-                                scoreP2.setText("-");
-                            }
+
                         }
                     }
                     break;
@@ -266,6 +260,8 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                     P3VidaN3.setVisibility(View.VISIBLE);
                     ivStarP3.setVisibility(View.VISIBLE);
                     scoreP3.setVisibility(View.VISIBLE);
+
+                    scoreP3.setText("-");
 
                     if(_objJugador.getVidas()==0){
                         P3VidaN1.setImageTintList(getResources().getColorStateList(R.color.btn_rojo_press));
@@ -294,9 +290,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                             if (player.getKey().equals(_objJugador.getUser())){
                                 scoreP3.setText(String.valueOf(player.getValue()));
                             }
-                            else {
-                                scoreP3.setText("-");
-                            }
+
                         }
                     }
                     break;
@@ -310,6 +304,8 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                     P4VidaN3.setVisibility(View.VISIBLE);
                     ivStarP4.setVisibility(View.VISIBLE);
                     scoreP4.setVisibility(View.VISIBLE);
+
+                    scoreP4.setText("-");
 
                     if(_objJugador.getVidas()==0){
                         P4VidaN1.setImageTintList(getResources().getColorStateList(R.color.btn_rojo_press));
@@ -338,9 +334,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                             if (player.getKey().equals(_objJugador.getUser())){
                                 scoreP4.setText(String.valueOf(player.getValue()));
                             }
-                            else {
-                                scoreP4.setText("-");
-                            }
+
                         }
                     }
                     break;
@@ -547,7 +541,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
             btnVerdeSound = MediaPlayer.create(MainActivity.this,R.raw.btnverde);
         }
         btnVerdeSound.start();
-        if(_bPlayMode==false) {
+        if(!_bPlayMode) {
             Secuencia.add("t");
             _iContadorSecuencia= 0;
             FinalizarTurno(1);
@@ -575,17 +569,17 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
             btnAmarilloSound = MediaPlayer.create(MainActivity.this,R.raw.btnamarillo);
         }
         btnAmarilloSound.start();
-        if(_bPlayMode==false) {
+        if(!_bPlayMode) {
             Secuencia.add("l");
             _iContadorSecuencia= 0;
             FinalizarTurno(1);
         }
         else{
 
-            if (ValidacionSecuencia("l")==true){
+            if (ValidacionSecuencia("l")){
                 // continua
                 _iContadorSecuencia++;
-                if(_bSecuenciaFinalizada==true){
+                if(_bSecuenciaFinalizada){
                     AgregarSecuencia();
                 }
             }
@@ -602,17 +596,17 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
             btnAzulSound = MediaPlayer.create(MainActivity.this,R.raw.btnazul);
         }
         btnAzulSound.start();
-        if(_bPlayMode==false) {
+        if(!_bPlayMode) {
             Secuencia.add("b");
             _iContadorSecuencia= 0;
             FinalizarTurno(1);
         }
         else{
 
-            if (ValidacionSecuencia("b")==true){
+            if (ValidacionSecuencia("b")){
                 // continua
                 _iContadorSecuencia++;
-                if(_bSecuenciaFinalizada==true){
+                if(_bSecuenciaFinalizada){
                     AgregarSecuencia();
                 }
             }
@@ -629,17 +623,17 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
             btnRojoSound = MediaPlayer.create(MainActivity.this,R.raw.btnrojo);
         }
         btnRojoSound.start();
-        if(_bPlayMode==false) {
+        if(!_bPlayMode) {
             Secuencia.add("r");
             _iContadorSecuencia= 0;
             FinalizarTurno(1);
         }
         else{
 
-            if (ValidacionSecuencia("r")==true){
+            if (ValidacionSecuencia("r")){
                 // continua
                 _iContadorSecuencia++;
-                if(_bSecuenciaFinalizada==true){
+                if(_bSecuenciaFinalizada){
                     AgregarSecuencia();
                 }
             }
@@ -676,6 +670,14 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
         btnTop.setEnabled(false);
         btnRight.setEnabled(false);
         btnLeft.setEnabled(false);
+
+        // Verifico si mi puntaje maximo se superó
+
+        if(RESULT > Perfil.MAX_SCORE){
+            Perfil.MAX_SCORE = RESULT;
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("maxScore").setValue(Perfil.MAX_SCORE);
+        }
+
         // Primero verifico si nunca se ha creado la primera ronda
         if(_objPartida.getRondas()==null || _objPartida.getRondas().size()==0){
             _objPartida.setRondas(new ArrayList<Round>());
@@ -693,6 +695,13 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                     if(_objPartida.getJugadores().get(_iPosicionProximoJugador).getEstado()==0 || _objPartida.getJugadores().get(_iPosicionProximoJugador).getEstado()==1){
 
                         _objPartida.setProximoJugador(_objPartida.getJugadores().get(_iPosicionProximoJugador).getUser());
+
+                        DBrefPartida.child(_objPartida.getID()).setValue(_objPartida);
+                        Perfil.ACTIVITY_NAVIGATION = true;
+                        Intent i = new Intent(MainActivity.this, InicioActivity.class);
+                        startActivity(i);
+                        finish();
+                        return;
                     }
                     else{
                         _iPosicionProximoJugador++;
@@ -701,11 +710,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
 
             }
 
-            DBrefPartida.child(_objPartida.getID()).setValue(_objPartida);
 
-            Intent i = new Intent(MainActivity.this, InicioActivity.class);
-            startActivity(i);
-            finish();
 
 
         }
@@ -725,6 +730,13 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                     if(_objPartida.getJugadores().get(_iPosicionProximoJugador).getEstado()==0 || _objPartida.getJugadores().get(_iPosicionProximoJugador).getEstado()==1){
 
                         _objPartida.setProximoJugador(_objPartida.getJugadores().get(_iPosicionProximoJugador).getUser());
+
+                        DBrefPartida.child(_objPartida.getID()).setValue(_objPartida);
+                        Perfil.ACTIVITY_NAVIGATION = true;
+                        Intent i = new Intent(MainActivity.this, InicioActivity.class);
+                        startActivity(i);
+                        finish();
+                        return;
                     }
                     else{
                         _iPosicionProximoJugador++;
@@ -733,11 +745,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
 
             }
 
-            DBrefPartida.child(_objPartida.getID()).setValue(_objPartida);
 
-            Intent i = new Intent(MainActivity.this, InicioActivity.class);
-            startActivity(i);
-            finish();
         }
         // si no ha finalizado coloco mi puntaje en ese ronda
         else {
@@ -754,7 +762,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                         _objPartida.setProximoJugador(_objPartida.getJugadores().get(_iPosicionProximoJugador).getUser());
 
                         DBrefPartida.child(_objPartida.getID()).setValue(_objPartida);
-
+                        Perfil.ACTIVITY_NAVIGATION = true;
                         Intent i = new Intent(MainActivity.this, InicioActivity.class);
                         startActivity(i);
                         finish();
@@ -791,34 +799,116 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                 }
 
             }
+            int _iIndexJugadorFuera = 0;
+            boolean _bPerdioUnJugador = false;
             // Aca recorro los jugadores para encontrar el index del user del menor score
             for(int i = 0; i < _objPartida.getJugadores().size(); i++){
                 if(_objPartida.getJugadores().get(i).getUser().equals(_sUserMin)){
                     // Encontrado, le resto una vida y checkeo si no quedo fuera
                     _objPartida.getJugadores().get(i).setVidas(_objPartida.getJugadores().get(i).getVidas()-1);
                     if(_objPartida.getJugadores().get(i).getVidas()==0){
-                        _objPartida.getJugadores().get(i).setEstado(3);
+                        // Seteo el estado 4 temporalmente para indicar que acaba de quedar fuera
+                        _objPartida.getJugadores().get(i).setEstado(4);
+                        _iIndexJugadorFuera = i;
+                        _bPerdioUnJugador = true;
 
                     }
                 }
                 // mientras recorro los jugadores los voy añadiendo a una lista temporal, para saber los que siguen participando
-                if(_objPartida.getJugadores().get(i).getEstado()!=2 && _objPartida.getJugadores().get(i).getEstado()!=3){
+                if(_objPartida.getJugadores().get(i).getEstado() == 1){
                     _lJugadoresRestantes.add(i);
                 }
             }
-            // Checkeo si hay ganador
-            if(_lJugadoresRestantes.size()==1){
-                _objPartida.getJugadores().get(_lJugadoresRestantes.get(0)).setEstado(4);
-                _objPartida.setEstado(0);
+            if(_bPerdioUnJugador){
+                //Mapeo el estado de la posicion en que quedó ese jugador con los dos primeros valores
+                String _sEstado = "3" + _objPartida.getCantidadJugadores();
 
-                DBrefPartida.child(_objPartida.getID()).setValue(_objPartida);
 
-                Intent i = new Intent(MainActivity.this,InicioActivity.class);
-                startActivity(i);
-                finish();
+                // de esta manera se si es el primero en quedar fuera, el segundo o tercero indistintamente
+                // de la cantidad de jugadores que son en total
+                int _iNumFuera = _objPartida.getCantidadJugadores() - _lJugadoresRestantes.size();
 
-                return;
+                if(_iNumFuera == 1){
+                    _sEstado += String.valueOf(_objPartida.getCantidadJugadores());
+                }
+                else if(_iNumFuera == 2){
+                    _sEstado += String.valueOf(_objPartida.getCantidadJugadores() -1);
+                }
+                else if(_iNumFuera == 3){
+                    _sEstado += String.valueOf(_objPartida.getCantidadJugadores() -2);
+                }
+
+                _objPartida.getJugadores().get(_iIndexJugadorFuera).setEstado(Integer.parseInt(_sEstado));
+
+                // Creo la misma variable como final porque si no, no puedo utilizarla dentro del onDataChange
+                final String _sStatus = _sEstado;
+               final DatabaseReference _objAux = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(_objPartida.getJugadores().get(_iIndexJugadorFuera).getUser()).child("Perfil");
+               _objAux.addListenerForSingleValueEvent(new ValueEventListener() {
+                   @Override
+                   public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                       //Me traigo la cantidad de partidas jugadas para sumarle una
+                       int _iTotalPartidasPrev = Integer.parseInt(dataSnapshot.child("partidasJugadas").getValue().toString());
+                       _objAux.child("partidasJugadas").setValue(_iTotalPartidasPrev + 1);
+
+                       //Me traigo la cantidad de partidas que salió en esa posición para sumarle una
+                       int _iCantPosicionPrev;
+
+
+                       // Consulto con que termina la variable que declaré arriba como final, ya que el último número me indica la posición en la que terminó
+                       if(_sStatus.endsWith("4")){
+                           _iCantPosicionPrev = Integer.parseInt(dataSnapshot.child("partidasCuartoPuesto").getValue().toString());
+                           _objAux.child("partidasCuartoPuesto").setValue(_iCantPosicionPrev +1);
+                       }
+                       else if(_sStatus.endsWith("3")){
+                           _iCantPosicionPrev = Integer.parseInt(dataSnapshot.child("partidasTercerPuesto").getValue().toString());
+                           _objAux.child("partidasTercerPuesto").setValue(_iCantPosicionPrev +1);
+                       }
+                       else if(_sStatus.endsWith("2")){
+                           _iCantPosicionPrev = Integer.parseInt(dataSnapshot.child("partidasSegundoPuesto").getValue().toString());
+                           _objAux.child("partidasSegundoPuesto").setValue(_iCantPosicionPrev +1);
+                       }
+
+                   }
+
+                   @Override
+                   public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                   }
+               });
+
+
+                // Checkeo si hay ganador
+                if(_lJugadoresRestantes.size()==1){
+                    _objPartida.getJugadores().get(_lJugadoresRestantes.get(0)).setEstado(Integer.parseInt("3" + _objPartida.getCantidadJugadores() + "1"));
+                    _objPartida.setEstado(0);
+
+                    DBrefPartida.child(_objPartida.getID()).setValue(_objPartida);
+
+                    final DatabaseReference _objAuxiliar = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(_objPartida.getJugadores().get(_lJugadoresRestantes.get(0)).getUser()).child("Perfil");
+                    _objAuxiliar.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            int _iCantVictoriasPrev = Integer.parseInt(dataSnapshot.child("partidasPrimerPuesto").getValue().toString());
+                            int _iTotalPartidasPrev = Integer.parseInt(dataSnapshot.child("partidasJugadas").getValue().toString());
+                            _objAuxiliar.child("partidasJugadas").setValue(_iTotalPartidasPrev + 1);
+                            _objAuxiliar.child("partidasPrimerPuesto").setValue(_iCantVictoriasPrev + 1);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                    Perfil.ACTIVITY_NAVIGATION = true;
+                    Intent i = new Intent(MainActivity.this,InicioActivity.class);
+                    startActivity(i);
+                    finish();
+
+                    return;
+                }
             }
+
 
             // Aca doy vuelta la ronda de turnos y busco el proximo participante a jugar (Al proximo que le toque, con las validaciones anteriormente
             // hechas, se va a encargar de crear la ronda como tal)
@@ -828,7 +918,7 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
                     _objPartida.setProximoJugador(_objPartida.getJugadores().get(_iPosicionProximoJugador).getUser());
 
                     DBrefPartida.child(_objPartida.getID()).setValue(_objPartida);
-
+                    Perfil.ACTIVITY_NAVIGATION = true;
                     Intent i = new Intent(MainActivity.this,InicioActivity.class);
                     startActivity(i);
                     finish();
@@ -924,14 +1014,40 @@ public class MainActivity extends AppCompatActivity implements AlertDialogTwoBut
     public void ResultCallback(int Result) {
         switch (Result){
             case 0:
+                Perfil.ACTIVITY_NAVIGATION = true;
                 Intent i = new Intent(MainActivity.this,InicioActivity.class);
                 startActivity(i);
                 finish();
+
                 break;
             case 1:
                 Play();
 
                 break;
         }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(Perfil.ONLINE && !Perfil.ACTIVITY_NAVIGATION){
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(false);
+            Perfil.ONLINE = false;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!Perfil.ONLINE){
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(true);
+            Perfil.ONLINE = true;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }

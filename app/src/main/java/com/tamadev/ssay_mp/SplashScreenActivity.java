@@ -74,6 +74,7 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
 
         InicioActivity.DBrefUsuario = FirebaseDatabase.getInstance().getReference();
         InicioActivity._dataListPartidas = new ArrayList<>();
+        InicioActivity._dataListPartidasInactivas = new ArrayList<>();
         InicioActivity.adapter = new RecyclerViewAdapter(SplashScreenActivity.this,InicioActivity._dataListPartidas);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -84,7 +85,6 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
         if(user != null) {
 
             Perfil.NAME = user.getDisplayName();
-            String _sEmail = user.getEmail();
             Perfil.URL_IMAGE_PROFILE = user.getPhotoUrl();
             Perfil.UID = user.getUid();
 
@@ -103,6 +103,8 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
                             tvPorcentaje.setText(_iProgressCounter+"%");
                             Perfil.USER_ID = dataSnapshot.child("IdentificadoresUnicos").child(Perfil.UID).getValue().toString();
                             Perfil.NAME = dataSnapshot.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("nombre").getValue().toString();
+
+
                             getAllUsers();
                             getPartidasActuales();
 
@@ -194,7 +196,16 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
             _iProgressCounter = 90;
            // pbCarga.setProgress(_iProgressCounter);
             tvPorcentaje.setText(_iProgressCounter+"%");
+
             InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("uid").setValue(Perfil.UID);
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("partidasPrimerPuesto").setValue(Perfil.FIRST_PLACE_GAMES);
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("partidasSegundoPuesto").setValue(Perfil.SECOND_PLACE_GAMES);
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("partidasTercerPuesto").setValue(Perfil.THIRD_PLACE_GAMES);
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("partidasCuartoPuesto").setValue(Perfil.QUARTER_PLACE_GAMES);
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("partidasJugadas").setValue(Perfil.MATCHES_PLAYED);
+            InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("maxScore").setValue(Perfil.MAX_SCORE);
+
+            getAllUsers();
             _iProgressCounter = 100;
            // pbCarga.setProgress(_iProgressCounter);
             tvPorcentaje.setText(_iProgressCounter+"%");
@@ -245,6 +256,7 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
             @Override
             public void onDataChange(@NonNull DataSnapshot NodosPrincipal) {
                 InicioActivity._dataListPartidas.clear();
+                InicioActivity._dataListPartidasInactivas.clear();
                 _iProgressCounter = 70;
                // pbCarga.setProgress(_iProgressCounter);
                 tvPorcentaje.setText(_iProgressCounter+"%");
@@ -269,8 +281,12 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
                                         _bPartidaActiva = true;
                                     }
                                 }
-                                if(_bPartidaActiva)
+                                if(_bPartidaActiva) {
                                     InicioActivity._dataListPartidas.add(_objCrearPartida);
+                                }
+                                else {
+                                    InicioActivity._dataListPartidasInactivas.add(_objCrearPartida);
+                                }
 
                             }
                             int _iCounter = 1;
@@ -395,7 +411,8 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
                         continue;
                     }
                     UserFriendProfile _objUser = new UserFriendProfile(User.child("Perfil").child("usuario").getValue().toString(),
-                                                                       User.child("Perfil").child("urlProfileImage").getValue().toString());
+                                                                       User.child("Perfil").child("urlProfileImage").getValue().toString(),
+                                                                        Boolean.parseBoolean(User.child("Perfil").child("enLinea").getValue().toString()));
                     AmigosActivity._dataListAllUsers.add(_objUser);
 
                 }
@@ -407,4 +424,7 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
             }
         });
     }
+
+
+
 }

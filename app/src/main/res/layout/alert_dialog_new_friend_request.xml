@@ -27,7 +27,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="10"
-                android:fontFamily="@font/amaranth_bold_italic"
+                android:fontFamily="@font/baloo_thambi"
                 android:gravity="center"
                 android:text="Solicitudes de Amistad"
                 android:textColor="#FFFFFF"

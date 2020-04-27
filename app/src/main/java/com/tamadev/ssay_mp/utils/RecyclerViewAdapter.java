@@ -2,21 +2,17 @@ package com.tamadev.ssay_mp.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
-import com.tamadev.ssay_mp.CreacionPartida;
-import com.tamadev.ssay_mp.LobbyPartidasActivity;
+import com.tamadev.ssay_mp.InicioActivity;
 import com.tamadev.ssay_mp.MainActivity;
 import com.tamadev.ssay_mp.MenuPrincipalActivity;
 import com.tamadev.ssay_mp.R;
@@ -107,21 +103,64 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
                 if(holder.lblTurno.getText().toString().equals("Jugar")){
+                    Perfil.ACTIVITY_NAVIGATION = true;
                     Intent i = new Intent(mContext, MainActivity.class);
-                    i.putExtra("IndexPartida",position);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.putExtra("Partida",_dataListPartidas.get(position));
                     mContext.startActivity(i);
 
                 }
                 else{
-                    for(int i = 0; i<_dataListPartidas.get(position).getJugadores().size();i++)
-                    {
-                        if (_dataListPartidas.get(position).getJugadores().get(i).getUser().equals(Perfil.USER_ID)){
-                            MenuPrincipalActivity.DBrefUsuario.child("Partidas").child(_dataListPartidas.get(position).getID()).child("jugadores").child(String.valueOf(i)).child("estado").setValue(1);
+                    new AlertDialogTwoButtons(v.getContext(), "Nueva partida",
+                                                        _dataListPartidas.get(position).getAnfitrion() + " te ha invitado a una partida de a " + _dataListPartidas.get(position).getCantidadJugadores() + " jugadores",
+                                                        "Aceptar",
+                                                        "Rechazar",
+                                                        new AlertDialogTwoButtons.AlertDialogTwoButtonsCallback() {
+                        @Override
+                        public void ResultCallback(int Result) {
+                            int _iMyIndexPlayer = 0;
+                            for(int i = 0; i<_dataListPartidas.get(position).getJugadores().size();i++)
+                            {
+                                if (_dataListPartidas.get(position).getJugadores().get(i).getUser().equals(Perfil.USER_ID)){
+                                    _iMyIndexPlayer = i;
+                                    break;
+                                }
+                            }
+                            switch (Result){
+                                case 0:
+                                    InicioActivity.DBrefUsuario.child("Partidas").child(_dataListPartidas.get(position).getID()).child("jugadores").child(String.valueOf(_iMyIndexPlayer)).child("estado").setValue(2);
+                                    if(_dataListPartidas.get(position).getProximoJugador().equals(Perfil.USER_ID)){
+                                        boolean _bJugadorEncontrado = false;
+                                        while (_iMyIndexPlayer < _dataListPartidas.get(position).getJugadores().size()-1){
+                                            _iMyIndexPlayer ++;
+                                            if(_dataListPartidas.get(position).getJugadores().get(_iMyIndexPlayer).getEstado() == 0 || _dataListPartidas.get(position).getJugadores().get(_iMyIndexPlayer).getEstado() == 1){
+                                                InicioActivity.DBrefUsuario.child("Partidas").child(_dataListPartidas.get(position).getID()).child("proximoJugador").setValue(_dataListPartidas.get(position).getJugadores().get(_iMyIndexPlayer).getUser());
+                                                _bJugadorEncontrado = true;
+                                                break;
+                                            }
+                                        }
+                                        if(!_bJugadorEncontrado){
+                                            _iMyIndexPlayer = 0;
+                                            while (_iMyIndexPlayer < _dataListPartidas.get(position).getJugadores().size()-1){
 
-                            break;
+                                                if(_dataListPartidas.get(position).getJugadores().get(_iMyIndexPlayer).getEstado() == 0 || _dataListPartidas.get(position).getJugadores().get(_iMyIndexPlayer).getEstado() == 1){
+                                                    InicioActivity.DBrefUsuario.child("Partidas").child(_dataListPartidas.get(position).getID()).child("proximoJugador").setValue(_dataListPartidas.get(position).getJugadores().get(_iMyIndexPlayer).getUser());
+                                                    _bJugadorEncontrado = true;
+                                                    break;
+                                                }
+                                                _iMyIndexPlayer ++;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case 1:
+                                    InicioActivity.DBrefUsuario.child("Partidas").child(_dataListPartidas.get(position).getID()).child("jugadores").child(String.valueOf(_iMyIndexPlayer)).child("estado").setValue(1);
+                                    break;
+                            }
                         }
-                    }
+                    });
+
+
 
 
                 }

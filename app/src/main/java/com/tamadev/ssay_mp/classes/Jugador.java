@@ -1,6 +1,9 @@
 package com.tamadev.ssay_mp.classes;
 
-public class Jugador {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Jugador implements Parcelable {
     private String user;
     private int estado;
     private int vidas;
@@ -15,6 +18,25 @@ public class Jugador {
     public Jugador(){
 
     }
+
+    protected Jugador(Parcel in) {
+        user = in.readString();
+        estado = in.readInt();
+        vidas = in.readInt();
+        urlImageUser = in.readString();
+    }
+
+    public static final Creator<Jugador> CREATOR = new Creator<Jugador>() {
+        @Override
+        public Jugador createFromParcel(Parcel in) {
+            return new Jugador(in);
+        }
+
+        @Override
+        public Jugador[] newArray(int size) {
+            return new Jugador[size];
+        }
+    };
 
     public int getVidas() {
         return vidas;
@@ -46,5 +68,18 @@ public class Jugador {
 
     public void setUrlImageUser(String urlImageUser) {
         this.urlImageUser = urlImageUser;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(user);
+        dest.writeInt(estado);
+        dest.writeInt(vidas);
+        dest.writeString(urlImageUser);
     }
 }

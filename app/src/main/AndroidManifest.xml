@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tamadev.ssay_mp">
 
+
     <application
+
         android:name=".SSayMpApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,8 +12,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".InicioActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+
+
+        <activity android:name=".PerfilActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".InicioActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MenuPrincipalActivityNavDrawer"
             android:label="@string/title_activity_menu_principal_nav_drawer"
@@ -29,13 +43,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".SplashScreenActivity" />
-        <activity android:name=".AmigosActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-        <activity android:name=".CreacionPartida"
-            android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".AmigosActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".CreacionPartida"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".RegistroActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".MenuPrincipalActivity" />
@@ -46,9 +60,11 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

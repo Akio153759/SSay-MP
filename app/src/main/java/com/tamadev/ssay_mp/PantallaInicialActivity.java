@@ -38,6 +38,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tamadev.ssay_mp.classes.Perfil;
 
 import java.security.MessageDigest;
 
@@ -49,12 +50,42 @@ public class PantallaInicialActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
+    private DatabaseReference DBRefInicial ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_pantalla_inicial);
+
+
+        DBRefInicial = FirebaseDatabase.getInstance().getReference();
+
+
+        DBRefInicial.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean _bServerOnline = Boolean.parseBoolean(dataSnapshot.child("ServidorOnline").getValue().toString());
+                double _dVersionActual = Double.parseDouble(dataSnapshot.child("Version").getValue().toString());
+
+                if(!_bServerOnline){
+                    finish();
+                    return;
+                }
+                if(Perfil.VERSION_APK < _dVersionActual){
+                    Toast.makeText(PantallaInicialActivity.this,"Version vieja", Toast.LENGTH_LONG).show();
+                    finish();
+                    return;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         callbackManager = CallbackManager.Factory.create();
 
         loginButton = (LoginButton)findViewById(R.id.loguinButton);
