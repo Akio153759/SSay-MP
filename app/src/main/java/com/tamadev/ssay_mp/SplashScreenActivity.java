@@ -11,8 +11,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.felipecsl.gifimageview.library.GifImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +36,9 @@ import com.tamadev.ssay_mp.utils.RVAdapterRequestFriend;
 import com.tamadev.ssay_mp.utils.RecyclerViewAdapter;
 import com.tamadev.ssay_mp.utils.tamatools;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import database.SQLiteDB;
@@ -46,8 +51,9 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
     //private ProgressBar pbCarga;
     private boolean _bPBActive = true;
     private boolean _bGetInicial = true;
-    private LottieAnimationView animationView;
+    private GifImageView gifImageView;
     private Handler handler = new Handler();
+    private DatabaseReference DBRefInicial;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +63,25 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash_screen);
+        gifImageView = (GifImageView) findViewById(R.id.animation);
+
+        try {
+            InputStream inputStream = getAssets().open("birra.gif");
+            byte [] bytes = IOUtils.toByteArray(inputStream);
+            gifImageView.setBytes(bytes);
+            gifImageView.startAnimation();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         getSupportActionBar().hide();
 
 
-        animationView = findViewById(R.id.animation_view);
+
         //pbCarga = findViewById(R.id.pbCarga);
         tvPorcentaje = findViewById(R.id.tvPorcentaje);
 
-        animationView.loop(true);
-        animationView.playAnimation();
+
 
         AmigosActivity.DBrefUsuarioFriends = FirebaseDatabase.getInstance().getReference().child("Usuarios");
         AmigosActivity._dataListAllUsers = new ArrayList<>();
@@ -81,6 +97,35 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
         _iProgressCounter = 20;
         //pbCarga.setProgress(_iProgressCounter);
         tvPorcentaje.setText(_iProgressCounter+"%");
+
+        DBRefInicial = FirebaseDatabase.getInstance().getReference();
+
+
+        DBRefInicial.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean _bServerOnline = Boolean.parseBoolean(dataSnapshot.child("ServidorOnline").getValue().toString());
+                double _dVersionActual = Double.parseDouble(dataSnapshot.child("Version").getValue().toString());
+
+                if(!_bServerOnline){
+                    Toast.makeText(SplashScreenActivity.this,"Server offline", Toast.LENGTH_LONG).show();
+                    finish();
+                    System.exit(0);
+                    return;
+                }
+                if(Perfil.VERSION_APK < _dVersionActual){
+                    Toast.makeText(SplashScreenActivity.this,"Version vieja", Toast.LENGTH_LONG).show();
+                    finish();
+                    System.exit(0);
+                    return;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         if(user != null) {
 
@@ -103,7 +148,6 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
                             tvPorcentaje.setText(_iProgressCounter+"%");
                             Perfil.USER_ID = dataSnapshot.child("IdentificadoresUnicos").child(Perfil.UID).getValue().toString();
                             Perfil.NAME = dataSnapshot.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("nombre").getValue().toString();
-
 
                             getAllUsers();
                             getPartidasActuales();
@@ -155,9 +199,16 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
                             e.printStackTrace();
                         }
                         if(_iProgressCounter==100){
-                            Intent i = new Intent(SplashScreenActivity.this,InicioActivity.class);
-                            startActivity(i);
-                            finish();
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    gifImageView.stopAnimation();
+                                    Intent i = new Intent(SplashScreenActivity.this,InicioActivity.class);
+                                    startActivity(i);
+                                    finish();
+                                }
+                            },3000);
+
                         }
                         _iProgressCounter++;
                         _bPBActive = true;
@@ -172,6 +223,7 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
     }
 
     private void goLoginScreen() {
+        gifImageView.stopAnimation();
         Intent i = new Intent(this,PantallaInicialActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
@@ -210,10 +262,16 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
            // pbCarga.setProgress(_iProgressCounter);
             tvPorcentaje.setText(_iProgressCounter+"%");
             if(_iProgressCounter==100){
-                animationView.pauseAnimation();
-                Intent i = new Intent(SplashScreenActivity.this,InicioActivity.class);
-                startActivity(i);
-                finish();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        gifImageView.stopAnimation();
+                        Intent i = new Intent(SplashScreenActivity.this,InicioActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
+                },3000);
             }
         }
     }
@@ -386,10 +444,16 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
                 if(_bGetInicial){
                     if(_iProgressCounter==100){
                         _bGetInicial = false;
-                        animationView.pauseAnimation();
-                        Intent i = new Intent(SplashScreenActivity.this,InicioActivity.class);
-                        startActivity(i);
-                        finish();
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                gifImageView.stopAnimation();
+                                Intent i = new Intent(SplashScreenActivity.this,InicioActivity.class);
+                                startActivity(i);
+                                finish();
+                            }
+                        },3000);
                     }
                 }
             }

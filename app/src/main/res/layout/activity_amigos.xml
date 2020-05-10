@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/splash_screen"
     android:orientation="vertical"
     tools:context=".AmigosActivity">
 
@@ -12,7 +13,7 @@
         android:layout_width="match_parent"
         android:elevation="4dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimaryDark"
+        android:background="@color/transparent"
         app:popupTheme="@style/AppTheme.PopupOverlay">
 
         <LinearLayout

@@ -32,10 +32,13 @@ import com.tamadev.ssay_mp.classes.Perfil;
 import com.tamadev.ssay_mp.classes.Round;
 import com.tamadev.ssay_mp.classes.UserFriendProfile;
 import com.tamadev.ssay_mp.utils.RVAdapterFriends;
+import com.tamadev.ssay_mp.utils.SendNotificationFCM;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import database.SQLiteDB;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CreacionPartida extends AppCompatActivity {
 
@@ -53,10 +56,10 @@ public class CreacionPartida extends AppCompatActivity {
     private EditText inputSearchFriend;
 
     public static ArrayList<UserFriendProfile> LISTA_JUGADORES_SALA = new ArrayList<>();
-    public static ImageView IV_ANFITRION_SALA;
-    public static ImageView IV_P2_SALA;
-    public static ImageView IV_P3_SALA;
-    public static ImageView IV_P4_SALA;
+    public static CircleImageView IV_ANFITRION_SALA;
+    public static CircleImageView IV_P2_SALA;
+    public static CircleImageView IV_P3_SALA;
+    public static CircleImageView IV_P4_SALA;
     public static TextView LBL_ANFITRION_SALA;
     public static TextView LBL_P2_SALA;
     public static TextView LBL_P3_SALA;
@@ -252,19 +255,39 @@ public class CreacionPartida extends AppCompatActivity {
                 Secuencia.add("r");
             }
         }
-        CrearPartida Partida = new CrearPartida();
+        final CrearPartida Partida = new CrearPartida();
 
         ArrayList<Jugador> Jugadores = new ArrayList<>();
         for(UserFriendProfile jugador: LISTA_JUGADORES_SALA){
             if(jugador.getUserID().equals(Perfil.USER_ID)){
-                Jugadores.add(new Jugador(jugador.getUserID(),1,Perfil.URL_IMAGE_PROFILE.toString(),3));
+                Jugadores.add(new Jugador(jugador.getUserID(),1,Perfil.URL_IMAGE_PROFILE.toString(),0));
             }
             else{
 
-                Jugadores.add(new Jugador(jugador.getUserID(),0,jugador.getUrlImageProfile(),3));
+                Jugadores.add(new Jugador(jugador.getUserID(),0,jugador.getUrlImageProfile(),0));
             }
 
         }
+
+
+        // Esto esta hardcode.. falta implementar la seleccion de cantidad de rondas
+        // en la sala de creacion partida y los escenarios correspondientes
+        ArrayList<Round> _lRondas = new ArrayList<>();
+        for(int i = 0; i < 3; i++){
+            Round round = new Round();
+            HashMap<String,Integer> score = new HashMap<>();
+            for(Jugador jugador : Jugadores){
+                score.put(jugador.getUser(),0);
+            }
+            round.setFinalizada(false);
+            round.setEscenario("simon");
+            round.setScore(score);
+            _lRondas.add(round);
+        }
+
+
+
+
         Partida.setCantidadJugadores(LISTA_JUGADORES_SALA.size());
         Partida.setJugadores(Jugadores);
         Partida.setProximoJugador(Perfil.USER_ID);
@@ -272,7 +295,7 @@ public class CreacionPartida extends AppCompatActivity {
         Partida.setID(Partida.GenerarIDPartida(LISTA_JUGADORES_SALA.toString() + Secuencia.toString() + (int) (Math.random() * 999999)));
         Partida.setEstado(1);
         Partida.setAnfitrion(Perfil.USER_ID);
-        Partida.setRondas(new ArrayList<Round>());
+        Partida.setRondas(_lRondas);
 
         DBrefPartidas = FirebaseDatabase.getInstance().getReference().child("Partidas");
 
@@ -289,6 +312,19 @@ public class CreacionPartida extends AppCompatActivity {
                 }
 
                 DBrefUsuario.child(participante.getUserID()).child("Partidas").push().setValue(Partida.getID());
+                DBrefUsuario.child(participante.getUserID()).child("Perfil").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String _sUserToken = dataSnapshot.child("userFCM").getValue().toString();
+                        SendNotificationFCM sendNotificationFCM = new SendNotificationFCM("Nueva partida",Partida.getAnfitrion() + " te ha invitado a una partida! ¿Podrás con ello?", _sUserToken);
+                        sendNotificationFCM.execute();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
 
 
@@ -303,7 +339,7 @@ public class CreacionPartida extends AppCompatActivity {
 
         LISTA_JUGADORES_SALA.clear();
         Perfil.ACTIVITY_NAVIGATION = true;
-        Intent i = new Intent(this, MainActivity.class);
+        Intent i = new Intent(this, SimonActivity.class);
         i.putExtra("Partida", Partida);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);

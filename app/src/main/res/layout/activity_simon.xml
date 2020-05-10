@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".SimonActivity"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -121,32 +121,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="2"/>
 
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent">
 
-                        <ImageView
-                            android:id="@+id/P1VidaN1"
-                            android:layout_width="0dp"
-                            app:srcCompat="@drawable/ic_sad_emoji"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-                        <ImageView
-                            android:id="@+id/P1VidaN2"
-                            android:layout_width="0dp"
-                            app:srcCompat="@drawable/ic_neutral_emoji"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-                        <ImageView
-                            android:id="@+id/P1VidaN3"
-                            android:layout_width="0dp"
-                            app:srcCompat="@drawable/ic_smile_emoji"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-
-                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -197,32 +172,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="2"/>
 
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent">
 
-                        <ImageView
-                            android:id="@+id/P2VidaN1"
-                            android:layout_width="0dp"
-                            app:srcCompat="@drawable/ic_sad_emoji"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-                        <ImageView
-                            android:id="@+id/P2VidaN2"
-                            android:layout_width="0dp"
-                            app:srcCompat="@drawable/ic_neutral_emoji"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-                        <ImageView
-                            android:id="@+id/P2VidaN3"
-                            android:layout_width="0dp"
-                            app:srcCompat="@drawable/ic_smile_emoji"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-
-                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -281,32 +231,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="2"/>
 
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent">
 
-                        <ImageView
-                            android:id="@+id/P3VidaN1"
-                            android:layout_width="0dp"
-                            app:srcCompat="@drawable/ic_sad_emoji"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-                        <ImageView
-                            android:id="@+id/P3VidaN2"
-                            android:layout_width="0dp"
-                            app:srcCompat="@drawable/ic_neutral_emoji"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-                        <ImageView
-                            android:id="@+id/P3VidaN3"
-                            android:layout_width="0dp"
-                            app:srcCompat="@drawable/ic_smile_emoji"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-
-                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -357,32 +282,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="2"/>
 
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent">
 
-                        <ImageView
-                            android:id="@+id/P4VidaN1"
-                            android:layout_width="0dp"
-                            app:srcCompat="@drawable/ic_sad_emoji"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-                        <ImageView
-                            android:id="@+id/P4VidaN2"
-                            android:layout_width="0dp"
-                            app:srcCompat="@drawable/ic_neutral_emoji"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-                        <ImageView
-                            android:id="@+id/P4VidaN3"
-                            android:layout_width="0dp"
-                            app:srcCompat="@drawable/ic_smile_emoji"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-
-                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -431,41 +331,74 @@
         app:srcCompat="@drawable/siluetauser" />
 
     <LinearLayout
-        android:layout_width="120dp"
-        android:layout_height="45dp"
-
-        android:layout_marginTop="380dp"
-        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+        <LinearLayout
+            android:layout_width="120dp"
+            android:layout_height="45dp"
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_marginTop="380dp"
+            android:orientation="horizontal"
+            >
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_star" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:text="Puntaje: "
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/myScore"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:text="0"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
             android:layout_gravity="center"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_star" />
+            android:layout_height="0dp">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:textSize="16sp"
-            android:gravity="center_vertical"
-            android:text="Puntaje: "
-            android:textColor="#FFFFFF" />
+            <ImageView
+                android:id="@+id/vida1"
+                android:layout_width="0dp"
+                app:srcCompat="@drawable/ic_sad_emoji"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+            <ImageView
+                android:id="@+id/vida2"
+                android:layout_width="0dp"
+                app:srcCompat="@drawable/ic_neutral_emoji"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+            <ImageView
+                android:id="@+id/vida3"
+                android:layout_width="0dp"
+                app:srcCompat="@drawable/ic_smile_emoji"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
 
-        <TextView
-            android:id="@+id/myScore"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="16sp"
-            android:gravity="center_vertical"
-            android:text="0"
-            android:textColor="#FFFFFF" />
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

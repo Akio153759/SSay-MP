@@ -13,8 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 import com.tamadev.ssay_mp.InicioActivity;
-import com.tamadev.ssay_mp.MainActivity;
-import com.tamadev.ssay_mp.MenuPrincipalActivity;
+import com.tamadev.ssay_mp.SimonActivity;
 import com.tamadev.ssay_mp.R;
 import com.tamadev.ssay_mp.classes.CrearPartida;
 import com.tamadev.ssay_mp.classes.Jugador;
@@ -103,11 +102,29 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
                 if(holder.lblTurno.getText().toString().equals("Jugar")){
+                    Intent intent = null;
+                    int _iRondaNro = 0;
+                    String _sEscenario = "";
+
+                    for(int i =0; i< _dataListPartidas.get(position).getRondas().size(); i++){
+                        if(!_dataListPartidas.get(position).getRondas().get(i).isFinalizada()){
+                            _iRondaNro = i;
+                            _sEscenario = _dataListPartidas.get(position).getRondas().get(i).getEscenario();
+                            break;
+                        }
+                    }
+                    switch (_sEscenario){
+                        case "simon":
+                            intent = new Intent(mContext, SimonActivity.class);
+                            break;
+                    }
+
                     Perfil.ACTIVITY_NAVIGATION = true;
-                    Intent i = new Intent(mContext, MainActivity.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    i.putExtra("Partida",_dataListPartidas.get(position));
-                    mContext.startActivity(i);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("Partida",_dataListPartidas.get(position));
+                    intent.putExtra("RondaNro", _iRondaNro);
+                    mContext.startActivity(intent);
+
 
                 }
                 else{

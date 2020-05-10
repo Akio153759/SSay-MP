@@ -18,9 +18,10 @@ import java.util.ArrayList;
 
 public class AlertDialogGamesHistory {
 
-    public AlertDialogGamesHistory(Context context, ArrayList<CrearPartida> _dataListPartidas) {
+    private ResultCallback resultCallback;
+    public AlertDialogGamesHistory(Context context, ArrayList<CrearPartida> _dataListPartidas, final ResultCallback iface) {
         final Dialog dialog = new Dialog(context);
-
+        resultCallback = iface;
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -40,6 +41,7 @@ public class AlertDialogGamesHistory {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                iface.ResultCallbackDialog(1);
             }
         });
 

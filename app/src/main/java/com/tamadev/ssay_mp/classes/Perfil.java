@@ -17,6 +17,7 @@ public class Perfil {
     public static int SECOND_PLACE_GAMES = 0;
     public static int THIRD_PLACE_GAMES = 0;
     public static int QUARTER_PLACE_GAMES = 0;
+    public static String TOKEN_FCM = "";
 
     public Perfil(){
 

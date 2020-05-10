@@ -5,29 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#136F64"
+    android:background="@drawable/splash_screen"
     android:gravity="bottom"
-    android:paddingBottom="70dp"
+    android:paddingBottom="50dp"
     tools:context=".SplashScreenActivity">
 
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animation_view"
-        android:layout_width="wrap_content"
+    <com.felipecsl.gifimageview.library.GifImageView
+        android:id="@+id/animation"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content"
-        app:lottie_imageAssetsFolder="assets"
-        app:lottie_fileName="splashprogressanimation.json"
-        />
+        android:layout_marginTop="50dp"
+        android:scaleType="fitCenter"
+         />
+
     <TextView
         android:id="@+id/tvPorcentaje"
-        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/amaranth_bold_italic"
         android:gravity="center"
         android:text="100%"
-        android:textColor="#FFFFFF"
+        android:textColor="#212121"
         android:textSize="20sp"
-        android:fontFamily="@font/amaranth_bold_italic"
-        />
+         />
 
 </LinearLayout>

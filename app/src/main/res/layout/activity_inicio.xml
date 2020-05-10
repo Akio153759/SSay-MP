@@ -12,6 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
+        android:background="@drawable/splash_screen"
         android:layout_height="match_parent">
 
         <androidx.appcompat.widget.Toolbar
@@ -20,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:elevation="4dp"
-            android:background="@color/colorPrimaryDark"
+            android:background="#80212121"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
             <LinearLayout
@@ -30,19 +31,21 @@
                 android:paddingRight="10dp"
                 android:orientation="horizontal">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/ivProfilePhotoBar"
                     android:layout_width="0dp"
-                    android:foreground="@drawable/circle_icon_primary_color"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    app:srcCompat="@android:drawable/ic_menu_gallery" />
+                    android:src="@mipmap/ic_launcher"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#cb393c"/>
 
                 <TextView
                     android:id="@+id/tvProfileNickBar"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-
+                    android:textColor="#fff"
                     android:layout_weight="4"
                     android:fontFamily="@font/baloo_thambi"
                     android:gravity="center_vertical"
@@ -79,7 +82,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
 
-            android:background="@color/colorPrimaryLight">
+            >
+
 
 
 
@@ -90,7 +94,6 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:layout_weight="6">
-
 
                 <Button
                     android:id="@+id/button2"

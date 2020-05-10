@@ -35,7 +35,9 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
         <activity android:name=".LobbyPartidasActivity" />
-        <activity android:name=".PantallaInicialActivity">
+        <activity
+            android:name=".PantallaInicialActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,7 +53,7 @@
             android:name=".CreacionPartida"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".RegistroActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".SimonActivity" />
         <activity android:name=".MenuPrincipalActivity" />
 
         <meta-data

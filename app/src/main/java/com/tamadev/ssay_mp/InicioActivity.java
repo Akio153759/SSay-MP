@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +22,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.felipecsl.gifimageview.library.GifImageView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.tamadev.ssay_mp.classes.CrearPartida;
 import com.tamadev.ssay_mp.classes.Perfil;
@@ -38,13 +43,34 @@ import com.tamadev.ssay_mp.classes.UserFriendProfile;
 import com.tamadev.ssay_mp.utils.AlertDialogNewRequestFriend;
 import com.tamadev.ssay_mp.utils.RVAdapterRequestFriend;
 import com.tamadev.ssay_mp.utils.RecyclerViewAdapter;
+import com.tamadev.ssay_mp.utils.SendNotificationFCM;
 
+import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class InicioActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     public static DatabaseReference DBrefUsuario;
     private DatabaseReference DBrefProfileUser;
+
     public static ArrayList<CrearPartida> _dataListPartidas;
     public static ArrayList<CrearPartida> _dataListPartidasInactivas;
     public static DatabaseReference DBrefFriendRequest;
@@ -52,15 +78,18 @@ public class InicioActivity extends AppCompatActivity {
     public static ArrayList<RequestFriend> _dataListNewRequestFriend = new ArrayList<>();
 
     private LinearLayoutManager layoutManager;
-    private ImageView ivProfilePhoto, ivLvlIcon, ivProfilePhotoBar;
+    private CircleImageView ivProfilePhoto, ivLvlIcon, ivProfilePhotoBar;
     private RecyclerView recyclerView;
     private ImageButton ibMore;
     private TextView tvNickName,tvNickNameBar , tvLvlTxt, tvProfileName;
     private ArrayList<SolicitudPartida> _dataListSolicitudes= new ArrayList<>();
     private ArrayList<CrearPartida> _listaSolicitudPartidas = new ArrayList<>();
+    private LottieAnimationView lottieAnimationView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -78,7 +107,7 @@ public class InicioActivity extends AppCompatActivity {
             Perfil.ONLINE = true;
         }
 
-
+        DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("userFCM").setValue(FirebaseInstanceId.getInstance().getToken());
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -226,17 +255,14 @@ public class InicioActivity extends AppCompatActivity {
         }
     }
 
-    public void Jugar(View view){
-        FirebaseMessaging fm = FirebaseMessaging.getInstance();
-        fm.send(new RemoteMessage.Builder(FirebaseInstanceId.getInstance().getId() + "@fcm.googleapis.com")
-                .setMessageId(FirebaseInstanceId.getInstance().getToken())
-                .addData("my_message", "Hello World")
-                .addData("my_action","SAY_HELLO")
-                .build());
 
-
-
+    public void Jugar(View view) {
+        Perfil.ACTIVITY_NAVIGATION = true;
+        Intent i = new Intent(InicioActivity.this,CreacionPartida.class);
+        startActivity(i);
+        finish();
     }
+
 
 
     @Override

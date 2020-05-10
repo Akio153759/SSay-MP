@@ -6,11 +6,11 @@ import android.os.Parcelable;
 public class Jugador implements Parcelable {
     private String user;
     private int estado;
-    private int vidas;
+    private int puntos;
     private String urlImageUser;
 
-    public Jugador(String user, int estado, String urlImageUser, int vidas) {
-        this.vidas = vidas;
+    public Jugador(String user, int estado, String urlImageUser, int puntos) {
+        this.puntos = puntos;
         this.user = user;
         this.estado = estado;
         this.urlImageUser = urlImageUser;
@@ -22,7 +22,7 @@ public class Jugador implements Parcelable {
     protected Jugador(Parcel in) {
         user = in.readString();
         estado = in.readInt();
-        vidas = in.readInt();
+        puntos = in.readInt();
         urlImageUser = in.readString();
     }
 
@@ -38,12 +38,12 @@ public class Jugador implements Parcelable {
         }
     };
 
-    public int getVidas() {
-        return vidas;
+    public int getPuntos() {
+        return puntos;
     }
 
-    public void setVidas(int vidas) {
-        this.vidas = vidas;
+    public void setPuntos(int puntos) {
+        this.puntos = puntos;
     }
 
     public String getUser() {
@@ -79,7 +79,7 @@ public class Jugador implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(user);
         dest.writeInt(estado);
-        dest.writeInt(vidas);
+        dest.writeInt(puntos);
         dest.writeString(urlImageUser);
     }
 }

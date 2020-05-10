@@ -1,6 +1,7 @@
 package com.tamadev.ssay_mp.utils;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import com.tamadev.ssay_mp.R;
 import com.tamadev.ssay_mp.classes.UserFriendProfile;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RVAdapterFriends extends RecyclerView.Adapter<RVAdapterFriends.ViewHolder> {
 
@@ -38,9 +41,10 @@ public class RVAdapterFriends extends RecyclerView.Adapter<RVAdapterFriends.View
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+        holder.ivOnline.setVisibility(View.INVISIBLE);
         Picasso.with(mContext).load(_dataListAmigosAdd.get(position).getUrlImageProfile()).error(R.mipmap.ic_launcher).fit().centerInside().into(holder.ivPhotoFriend);
-        if(!_dataListAmigosAdd.get(position).isOnline()){
-            holder.ivOnline.setVisibility(View.INVISIBLE);
+        if(_dataListAmigosAdd.get(position).isOnline()){
+            holder.ivPhotoFriend.setBorderColor(Color.parseColor("#4CFF00"));
         }
         holder.lblUserFriend.setText(_dataListAmigosAdd.get(position).getUserID());
 
@@ -91,7 +95,8 @@ public class RVAdapterFriends extends RecyclerView.Adapter<RVAdapterFriends.View
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        ImageView ivPhotoFriend, ivOnline;
+        ImageView ivOnline;
+        CircleImageView ivPhotoFriend ;
         TextView lblUserFriend;
 
         public ViewHolder(View itemView) {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryLight">#D5FAF2</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimaryLight">#95B97E27</color>
+    <color name="colorPrimaryDark">#443403</color>
     <color name="colorAccent">#D81B60</color>
     <color name="btn_verde_notpress">#137200</color>
     <color name="btn_verde_press">#27D404</color>
@@ -14,4 +14,6 @@
     <color name="btn_rojo_press">#DC0000</color>
     <color name="azul_fb_notpress">#205EEC</color>
     <color name="azul_fb_press">#5780E6</color>
+    <color name="red_birra">#FFAF1C1E</color>
+    <color name="transparent">#80212121</color>
 </resources>

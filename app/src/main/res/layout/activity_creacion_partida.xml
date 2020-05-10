@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@drawable/splash_screen"
     android:orientation="vertical"
     tools:context=".CreacionPartida">
 
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:elevation="4dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimaryDark"
+        android:background="#80212121"
         app:popupTheme="@style/AppTheme.PopupOverlay">
 
         <LinearLayout
@@ -32,7 +32,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="10"
-                android:textColor="#FFFFFF"
+                android:textColor="#fff"
                 android:text="Creando partida"
                 android:fontFamily="@font/amaranth_bold_italic"
                 android:paddingLeft="30dp"
@@ -103,7 +103,8 @@
                 android:gravity="center"
                 android:fontFamily="@font/amaranth_bold_italic"
                 android:textSize="28sp"
-                android:textColor="@color/colorPrimaryDark"
+                android:background="@drawable/bg_search_friend_pcolor"
+                android:textColor="#fff"
                 android:layout_marginBottom="10dp"
                 android:text="Partida de ElAko"
                 android:layout_weight="1"/>
@@ -119,15 +120,16 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1">
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/ivAnfitrion"
                         android:layout_width="63dp"
                         android:elevation="4dp"
                         android:layout_gravity="center"
                         android:layout_height="0dp"
                         android:layout_weight="5"
-                        android:foreground="@drawable/circle_icon_white"
-                        app:srcCompat="@mipmap/ic_launcher" />
+                        android:src="@mipmap/ic_launcher"
+                        app:civ_border_width="2dp"
+                        app:civ_border_color="@color/red_birra"/>
                     <TextView
                         android:id="@+id/tvAnfitrion"
                         android:layout_width="match_parent"
@@ -146,15 +148,16 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1">
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/ivPlayer2"
                         android:layout_width="63dp"
                         android:elevation="4dp"
                         android:layout_gravity="center"
                         android:layout_height="0dp"
                         android:layout_weight="5"
-                        android:foreground="@drawable/circle_icon_white"
-                        app:srcCompat="@mipmap/ic_launcher" />
+                        android:src="@mipmap/ic_launcher"
+                        app:civ_border_width="2dp"
+                        app:civ_border_color="@color/red_birra"/>
                     <TextView
                         android:id="@+id/tvPlayer2"
                         android:layout_width="match_parent"
@@ -173,6 +176,8 @@
                 android:layout_height="0dp"
                 android:text="VS"
                 android:textSize="26sp"
+                android:fontFamily="@font/baloo_thambi"
+                android:textColor="@color/red_birra"
                 android:gravity="center"
                 android:layout_weight="1"/>
 
@@ -188,15 +193,16 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1">
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/ivPlayer3"
                         android:layout_width="63dp"
-                        android:layout_gravity="center"
                         android:elevation="4dp"
+                        android:layout_gravity="center"
                         android:layout_height="0dp"
                         android:layout_weight="5"
-                        android:foreground="@drawable/circle_icon_white"
-                        app:srcCompat="@mipmap/ic_launcher" />
+                        android:src="@mipmap/ic_launcher"
+                        app:civ_border_width="2dp"
+                        app:civ_border_color="@color/red_birra"/>
                     <TextView
                         android:id="@+id/tvPlayer3"
                         android:layout_width="match_parent"
@@ -214,15 +220,16 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1">
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/ivPlayer4"
                         android:layout_width="63dp"
-                        android:layout_gravity="center"
                         android:elevation="4dp"
+                        android:layout_gravity="center"
                         android:layout_height="0dp"
                         android:layout_weight="5"
-                        android:foreground="@drawable/circle_icon_white"
-                        app:srcCompat="@mipmap/ic_launcher" />
+                        android:src="@mipmap/ic_launcher"
+                        app:civ_border_width="2dp"
+                        app:civ_border_color="@color/red_birra"/>
                     <TextView
                         android:id="@+id/tvPlayer4"
                         android:layout_width="match_parent"

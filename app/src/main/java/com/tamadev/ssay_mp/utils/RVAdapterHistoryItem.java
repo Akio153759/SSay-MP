@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -103,10 +104,9 @@ public class RVAdapterHistoryItem extends RecyclerView.Adapter<RVAdapterHistoryI
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        ImageView ivPosition;
-        TextView lblFirst, lblSecond, lblThird, lblQuarter,
-                 lblNickFirst, lblNickSecond, lblNickThird, lblNickQuarter;
-        Button btnViewMore;
+        ImageView ivPosition,lblFirst,lblSecond,lblThird, lblQuarter;
+        TextView lblNickFirst, lblNickSecond, lblNickThird, lblNickQuarter;
+        ImageButton btnViewMore;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

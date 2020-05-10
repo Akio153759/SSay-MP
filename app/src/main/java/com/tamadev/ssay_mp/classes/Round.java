@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 public class Round implements Parcelable {
     private HashMap<String,Integer> score;
+    private String escenario;
     private boolean finalizada;
 
     public Round() {
@@ -16,6 +17,7 @@ public class Round implements Parcelable {
     protected Round(Parcel in) {
         finalizada = in.readByte() != 0;
         score = (HashMap<String, Integer>)in.readSerializable();
+        escenario = in.readString();
     }
 
     public static final Creator<Round> CREATOR = new Creator<Round>() {
@@ -46,6 +48,14 @@ public class Round implements Parcelable {
         this.finalizada = finalizada;
     }
 
+    public String getEscenario() {
+        return escenario;
+    }
+
+    public void setEscenario(String escenario) {
+        this.escenario = escenario;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -55,5 +65,6 @@ public class Round implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte((byte) (finalizada ? 1 : 0));
         dest.writeSerializable(score);
+        dest.writeString(escenario);
     }
 }

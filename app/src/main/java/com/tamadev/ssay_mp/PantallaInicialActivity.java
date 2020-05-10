@@ -11,6 +11,8 @@ import android.content.pm.Signature;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -57,6 +59,9 @@ public class PantallaInicialActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_pantalla_inicial);
 
 
@@ -70,6 +75,7 @@ public class PantallaInicialActivity extends AppCompatActivity {
                 double _dVersionActual = Double.parseDouble(dataSnapshot.child("Version").getValue().toString());
 
                 if(!_bServerOnline){
+                    Toast.makeText(PantallaInicialActivity.this,"Version vieja", Toast.LENGTH_LONG).show();
                     finish();
                     return;
                 }

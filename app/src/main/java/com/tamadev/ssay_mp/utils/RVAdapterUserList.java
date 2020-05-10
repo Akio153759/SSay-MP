@@ -12,6 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.tamadev.ssay_mp.AmigosActivity;
 import com.tamadev.ssay_mp.R;
@@ -67,6 +72,22 @@ public class RVAdapterUserList extends RecyclerView.Adapter<RVAdapterUserList.Vi
                         String _sRequestKey = new CrearPartida().GenerarIDPartida(_dataListUser.get(position).getUserID() + Perfil.USER_ID);
                         AmigosActivity.DBrefUsuarioFriends.child(_dataListUser.get(position).getUserID()).child("SolicitudesRecibidas").child(_sRequestKey).setValue(Perfil.USER_ID);
                         AmigosActivity.DBrefUsuarioFriends.child(Perfil.USER_ID).child("SolicitudesEnviadas").child(_sRequestKey).setValue(_dataListUser.get(position).getUserID());
+
+                        DatabaseReference DBrefAux = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(_dataListUser.get(position).getUserID()).child("Perfil");
+                        DBrefAux.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                String _sToken = dataSnapshot.child("userFCM").getValue().toString();
+                                SendNotificationFCM sendNotificationFCM = new SendNotificationFCM("Nueva solicitud de amistad",Perfil.USER_ID + " te ha enviado una solicitud de amistad",_sToken);
+                                sendNotificationFCM.execute();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
                     }
                 });
             }

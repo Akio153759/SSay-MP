@@ -7,11 +7,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -25,6 +27,7 @@ import com.tamadev.ssay_mp.classes.Perfil;
 import com.tamadev.ssay_mp.classes.UserFriendProfile;
 import com.tamadev.ssay_mp.utils.AlertDialogGamesHistory;
 import com.tamadev.ssay_mp.utils.RVAdapterFriendsRanking;
+import com.tamadev.ssay_mp.utils.ResultCallback;
 
 import java.util.ArrayList;
 
@@ -39,6 +42,7 @@ public class PerfilActivity extends AppCompatActivity {
     private int _iProgressDes;
     private LinearLayoutManager layoutManager;
     private RVAdapterFriendsRanking adapterFriendsRanking;
+    private LinearLayout pantallaCompleta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,7 @@ public class PerfilActivity extends AppCompatActivity {
         ivProfilePhoto = findViewById(R.id.ivProfilePhoto);
         pbDesemp = findViewById(R.id.pbDesemp);
         rvRanking = findViewById(R.id.rvRanking);
+
 
         tvNick.setText(Perfil.USER_ID);
         tvName.setText(Perfil.NAME);
@@ -126,6 +131,7 @@ public class PerfilActivity extends AppCompatActivity {
         adapterFriendsRanking = new RVAdapterFriendsRanking(getRanking(),PerfilActivity.this);
         rvRanking.setLayoutManager(layoutManager);
         rvRanking.setAdapter(adapterFriendsRanking);
+        pantallaCompleta = findViewById(R.id.screen);
     }
 
     private int getDesempenio(int _iMatchesPlayed, int _iFirstPlaceGames, int _iSecondPlaceGames, int _iThirdPlaceGames, int _iQuarterPlaceGames){
@@ -222,7 +228,13 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     public void ShowGamesHistory(View view){
-        new AlertDialogGamesHistory(PerfilActivity.this,InicioActivity._dataListPartidasInactivas);
+        pantallaCompleta.setForeground(getDrawable(R.drawable.black_screen_dialog));
+        new AlertDialogGamesHistory(PerfilActivity.this, InicioActivity._dataListPartidasInactivas, new ResultCallback() {
+            @Override
+            public void ResultCallbackDialog(int Result) {
+                pantallaCompleta.setForeground(getDrawable(R.drawable.normal_screen_dialog));
+            }
+        });
     }
 
     public void Regresar(View view){
