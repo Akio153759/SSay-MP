@@ -23,7 +23,7 @@ public class AlertDialogGamesHistory {
         final Dialog dialog = new Dialog(context);
         resultCallback = iface;
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setContentView(R.layout.alert_dialog_games_history);
 

@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import com.tamadev.ssay_mp.InicioActivity;
 import com.tamadev.ssay_mp.SimonActivity;
 import com.tamadev.ssay_mp.R;
+import com.tamadev.ssay_mp.SpeedActivity;
 import com.tamadev.ssay_mp.classes.CrearPartida;
 import com.tamadev.ssay_mp.classes.Jugador;
 import com.tamadev.ssay_mp.classes.Perfil;
@@ -117,9 +118,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         case "simon":
                             intent = new Intent(mContext, SimonActivity.class);
                             break;
+                        case "speed":
+                            intent = new Intent(mContext, SpeedActivity.class);
+                            break;
                     }
 
                     Perfil.ACTIVITY_NAVIGATION = true;
+                    InicioActivity.sountrack.stop();
+                    InicioActivity.sountrack.release();
+                    InicioActivity.sountrack = null;
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra("Partida",_dataListPartidas.get(position));
                     intent.putExtra("RondaNro", _iRondaNro);

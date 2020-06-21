@@ -44,7 +44,7 @@ public class RVAdapterFriends extends RecyclerView.Adapter<RVAdapterFriends.View
         holder.ivOnline.setVisibility(View.INVISIBLE);
         Picasso.with(mContext).load(_dataListAmigosAdd.get(position).getUrlImageProfile()).error(R.mipmap.ic_launcher).fit().centerInside().into(holder.ivPhotoFriend);
         if(_dataListAmigosAdd.get(position).isOnline()){
-            holder.ivPhotoFriend.setBorderColor(Color.parseColor("#4CFF00"));
+            holder.ivOnline.setVisibility(View.VISIBLE);
         }
         holder.lblUserFriend.setText(_dataListAmigosAdd.get(position).getUserID());
 

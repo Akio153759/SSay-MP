@@ -41,6 +41,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tamadev.ssay_mp.classes.Perfil;
+import com.tamadev.ssay_mp.utils.AlertDialogNotification;
+import com.tamadev.ssay_mp.utils.ResultCallback;
 
 import java.security.MessageDigest;
 
@@ -65,32 +67,6 @@ public class PantallaInicialActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pantalla_inicial);
 
 
-        DBRefInicial = FirebaseDatabase.getInstance().getReference();
-
-
-        DBRefInicial.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                boolean _bServerOnline = Boolean.parseBoolean(dataSnapshot.child("ServidorOnline").getValue().toString());
-                double _dVersionActual = Double.parseDouble(dataSnapshot.child("Version").getValue().toString());
-
-                if(!_bServerOnline){
-                    Toast.makeText(PantallaInicialActivity.this,"Version vieja", Toast.LENGTH_LONG).show();
-                    finish();
-                    return;
-                }
-                if(Perfil.VERSION_APK < _dVersionActual){
-                    Toast.makeText(PantallaInicialActivity.this,"Version vieja", Toast.LENGTH_LONG).show();
-                    finish();
-                    return;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
         callbackManager = CallbackManager.Factory.create();
 
@@ -122,7 +98,6 @@ public class PantallaInicialActivity extends AppCompatActivity {
                 }
             }
         };
-
 
 
 

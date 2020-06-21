@@ -90,12 +90,7 @@ public class RVAdapterHistoryItem extends RecyclerView.Adapter<RVAdapterHistoryI
             }
         }
 
-        holder.btnViewMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
     }
 
     @Override
@@ -106,7 +101,7 @@ public class RVAdapterHistoryItem extends RecyclerView.Adapter<RVAdapterHistoryI
     public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView ivPosition,lblFirst,lblSecond,lblThird, lblQuarter;
         TextView lblNickFirst, lblNickSecond, lblNickThird, lblNickQuarter;
-        ImageButton btnViewMore;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -119,7 +114,7 @@ public class RVAdapterHistoryItem extends RecyclerView.Adapter<RVAdapterHistoryI
             lblNickThird = itemView.findViewById(R.id.lblNick3ro);
             lblQuarter = itemView.findViewById(R.id.lbl4to);
             lblNickQuarter = itemView.findViewById(R.id.lblNick4to);
-            btnViewMore = itemView.findViewById(R.id.btnViewMore);
+
         }
     }
 }

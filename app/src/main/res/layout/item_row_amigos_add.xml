@@ -23,7 +23,7 @@
             android:layout_weight="5"
             android:src="@mipmap/ic_launcher"
             app:civ_border_width="2dp"
-            app:civ_border_color="#B9B9B9"/>
+            app:civ_border_color="@color/colorPrimaryLight"/>
 
 
         <LinearLayout

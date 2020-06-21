@@ -32,8 +32,10 @@ import com.tamadev.ssay_mp.classes.UsuarioEnFirebase;
 import com.tamadev.ssay_mp.utils.AlertDialogIngreso;
 import com.tamadev.ssay_mp.utils.AlertDialogNewFriend;
 import com.tamadev.ssay_mp.utils.AlertDialogNewRequestFriend;
+import com.tamadev.ssay_mp.utils.AlertDialogNotification;
 import com.tamadev.ssay_mp.utils.RVAdapterRequestFriend;
 import com.tamadev.ssay_mp.utils.RecyclerViewAdapter;
+import com.tamadev.ssay_mp.utils.ResultCallback;
 import com.tamadev.ssay_mp.utils.tamatools;
 
 import org.apache.commons.io.IOUtils;
@@ -53,7 +55,7 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
     private boolean _bGetInicial = true;
     private GifImageView gifImageView;
     private Handler handler = new Handler();
-    private DatabaseReference DBRefInicial;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,34 +100,7 @@ public class SplashScreenActivity extends AppCompatActivity implements AlertDial
         //pbCarga.setProgress(_iProgressCounter);
         tvPorcentaje.setText(_iProgressCounter+"%");
 
-        DBRefInicial = FirebaseDatabase.getInstance().getReference();
 
-
-        DBRefInicial.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                boolean _bServerOnline = Boolean.parseBoolean(dataSnapshot.child("ServidorOnline").getValue().toString());
-                double _dVersionActual = Double.parseDouble(dataSnapshot.child("Version").getValue().toString());
-
-                if(!_bServerOnline){
-                    Toast.makeText(SplashScreenActivity.this,"Server offline", Toast.LENGTH_LONG).show();
-                    finish();
-                    System.exit(0);
-                    return;
-                }
-                if(Perfil.VERSION_APK < _dVersionActual){
-                    Toast.makeText(SplashScreenActivity.this,"Version vieja", Toast.LENGTH_LONG).show();
-                    finish();
-                    System.exit(0);
-                    return;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
         if(user != null) {
 

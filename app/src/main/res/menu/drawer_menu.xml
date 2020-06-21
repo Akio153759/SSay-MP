@@ -25,10 +25,6 @@
     <item android:title="Ayuda">
         <menu>
             <item
-                android:id="@+id/nav_preferences"
-                android:icon="@drawable/ic_preferences"
-                android:title="Preferencias" />
-            <item
                 android:id="@+id/nav_how_to_play"
                 android:icon="@drawable/ic_how_to_play"
                 android:title="¿Cómo jugar?" />

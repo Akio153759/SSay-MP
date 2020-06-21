@@ -5,6 +5,8 @@ import android.net.Uri;
 public class Perfil {
 
     public final static double VERSION_APK = 1.0;
+    public static double VERSION_APK_REQUIRED = 0;
+    public static boolean SERVER_ONLINE = true;
     public static String NAME = "";
     public static String UID = "";
     public static String USER_ID = "";

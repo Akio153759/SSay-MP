@@ -228,11 +228,11 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     public void ShowGamesHistory(View view){
-        pantallaCompleta.setForeground(getDrawable(R.drawable.black_screen_dialog));
+        //pantallaCompleta.setForeground(getDrawable(R.drawable.black_screen_dialog));
         new AlertDialogGamesHistory(PerfilActivity.this, InicioActivity._dataListPartidasInactivas, new ResultCallback() {
             @Override
             public void ResultCallbackDialog(int Result) {
-                pantallaCompleta.setForeground(getDrawable(R.drawable.normal_screen_dialog));
+                //pantallaCompleta.setForeground(getDrawable(R.drawable.normal_screen_dialog));
             }
         });
     }
@@ -259,6 +259,7 @@ public class PerfilActivity extends AppCompatActivity {
         if(Perfil.ONLINE && !Perfil.ACTIVITY_NAVIGATION){
             InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(false);
             Perfil.ONLINE = false;
+            InicioActivity.sountrack.pause();
         }
     }
 
@@ -268,6 +269,7 @@ public class PerfilActivity extends AppCompatActivity {
         if(!Perfil.ONLINE){
             InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(true);
             Perfil.ONLINE = true;
+            InicioActivity.sountrack.start();
         }
     }
 }

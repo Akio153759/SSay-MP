@@ -174,23 +174,7 @@
 
         </LinearLayout>
     </LinearLayout>
-        <ImageButton
-            android:id="@+id/btnViewMore"
-            android:layout_width="0dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_height="30dp"
-            android:fontFamily="@font/amaranth_bold_italic"
-            android:elevation="4dp"
-            android:textSize="12sp"
-            android:layout_gravity="center"
-            android:textColor="@android:color/white"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/more"
-            android:layout_weight=".5"/>
+
 
 
 

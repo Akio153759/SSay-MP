@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -339,6 +340,9 @@ public class CreacionPartida extends AppCompatActivity {
 
         LISTA_JUGADORES_SALA.clear();
         Perfil.ACTIVITY_NAVIGATION = true;
+        InicioActivity.sountrack.stop();
+        InicioActivity.sountrack.release();
+        InicioActivity.sountrack = null;
         Intent i = new Intent(this, SimonActivity.class);
         i.putExtra("Partida", Partida);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -372,6 +376,7 @@ public class CreacionPartida extends AppCompatActivity {
         if(Perfil.ONLINE && !Perfil.ACTIVITY_NAVIGATION){
             InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(false);
             Perfil.ONLINE = false;
+            InicioActivity.sountrack.pause();
         }
     }
 
@@ -381,6 +386,7 @@ public class CreacionPartida extends AppCompatActivity {
         if(!Perfil.ONLINE){
             InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(true);
             Perfil.ONLINE = true;
+            InicioActivity.sountrack.start();
         }
     }
 }

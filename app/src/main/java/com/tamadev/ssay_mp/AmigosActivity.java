@@ -376,6 +376,7 @@ public class AmigosActivity extends AppCompatActivity {
         if(Perfil.ONLINE && !Perfil.ACTIVITY_NAVIGATION){
             InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(false);
             Perfil.ONLINE = false;
+            InicioActivity.sountrack.pause();
         }
     }
 
@@ -385,6 +386,7 @@ public class AmigosActivity extends AppCompatActivity {
         if(!Perfil.ONLINE){
             InicioActivity.DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(true);
             Perfil.ONLINE = true;
+            InicioActivity.sountrack.start();
         }
     }
 }

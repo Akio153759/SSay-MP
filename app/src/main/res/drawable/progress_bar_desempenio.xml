@@ -4,8 +4,8 @@
     <item android:id="@android:id/background">
         <shape>
             <gradient
-                android:startColor="#FFF"
-                android:endColor="#FFF"
+                android:startColor="@color/transparent"
+                android:endColor="@color/transparent"
                 />
 
             <corners android:bottomLeftRadius="50px" android:topLeftRadius="50px" android:topRightRadius="50px" android:bottomRightRadius="50px"/>

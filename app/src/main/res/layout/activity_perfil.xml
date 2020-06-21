@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/splash_screen"
     android:id="@+id/screen"
     tools:context=".PerfilActivity">
 
@@ -13,7 +14,7 @@
         android:layout_width="match_parent"
         android:elevation="4dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimaryDark"
+        android:background="@color/transparent"
         app:popupTheme="@style/AppTheme.PopupOverlay">
 
         <LinearLayout
@@ -47,7 +48,7 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:background="@color/colorPrimaryLight"
+
         android:layout_width="match_parent"
         android:padding="10dp"
         android:layout_height="match_parent">
@@ -55,17 +56,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:orientation="horizontal"
+            android:background="@drawable/bg_search_friend_pcolor_dark"
+            android:padding="15dp"
             >
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/ivProfilePhoto"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="bottom"
-                android:foreground="@drawable/circle_icon_pcolor_light"
-                app:srcCompat="@mipmap/ic_launcher" />
+                android:src="@mipmap/ic_launcher"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/colorPrimaryLight"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -75,12 +81,12 @@
                 <TextView
                     android:id="@+id/tvNombre"
                     android:layout_width="match_parent"
-                    android:textSize="28sp"
+                    android:textSize="24sp"
                     android:fontFamily="@font/baloo_thambi"
                     android:text="Akio Tamashiro"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@android:color/white"
                     android:layout_weight="1"
-                    android:paddingTop="10dp"
+
                     android:gravity="center_vertical"
                     android:layout_height="0dp"/>
                 <TextView
@@ -88,6 +94,7 @@
                     android:layout_width="match_parent"
                     android:textSize="24sp"
                     android:paddingBottom="10dp"
+                    android:textColor="@color/colorPrimaryLight"
                     android:fontFamily="@font/amaranth_italic"
                     android:text="ElAko"
                     android:layout_weight="1"
@@ -102,7 +109,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:elevation="3dp"
-            android:background="@drawable/bg_search_friend_white"
+            android:background="@drawable/bg_search_friend_pcolor_dark"
             android:layout_height="0dp"
             android:layout_weight="10">
             <LinearLayout
@@ -113,7 +120,7 @@
 
                 <TextView
                     android:layout_weight="1"
-                    android:textColor="#01566B"
+                    android:textColor="@android:color/white"
                     android:text="Tu desempeño"
                     android:gravity="center"
                     android:textSize="22sp"
@@ -136,6 +143,7 @@
                 <TextView
                     android:id="@+id/lblDesempMsg"
                     android:layout_width="match_parent"
+                    android:textColor="#884D56"
                     android:layout_height="0dp"
                     android:fontFamily="@font/amaranth_italic"
                     android:text="Nada mal!"
@@ -153,10 +161,10 @@
 
                     <TextView
                         android:layout_weight="1"
-                        android:textColor="#01566B"
+                        android:textColor="@android:color/white"
                         android:text="Partidas jugadas"
                         android:gravity="center"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         android:fontFamily="@font/baloo_thambi"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"/>
@@ -173,10 +181,10 @@
 
                     <TextView
                         android:layout_weight="1"
-                        android:textColor="#01566B"
+                        android:textColor="@android:color/white"
                         android:text="Tu mejor puntaje"
                         android:gravity="center"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         android:fontFamily="@font/baloo_thambi"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"/>
@@ -229,6 +237,7 @@
                             android:id="@+id/lblFirstPlace"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
+                            android:textColor="#884D56"
                             android:layout_weight="1"
                             android:fontFamily="@font/baloo_thambi"
                             android:text="12"
@@ -250,6 +259,7 @@
                             android:id="@+id/lblSecondPlace"
                             android:layout_width="match_parent"
                             android:fontFamily="@font/baloo_thambi"
+                            android:textColor="#884D56"
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:text="32"
@@ -271,6 +281,7 @@
                             android:id="@+id/lblThirdPlace"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
+                            android:textColor="#884D56"
                             android:fontFamily="@font/baloo_thambi"
                             android:layout_weight="1"
                             android:text="6"
@@ -290,6 +301,7 @@
                             android:layout_height="0dp"/>
                         <TextView
                             android:id="@+id/lblQuarterPlace"
+                            android:textColor="#884D56"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:fontFamily="@font/baloo_thambi"
@@ -313,7 +325,7 @@
 
                     <TextView
                         android:layout_weight="1"
-                        android:textColor="#01566B"
+                        android:textColor="@android:color/white"
                         android:text="Ranking entre tus amigos"
                         android:gravity="center"
                         android:textSize="16sp"

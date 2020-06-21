@@ -39,7 +39,7 @@
                     android:layout_weight="1"
                     android:src="@mipmap/ic_launcher"
                     app:civ_border_width="2dp"
-                    app:civ_border_color="#cb393c"/>
+                    app:civ_border_color="@color/colorPrimaryLight"/>
 
                 <TextView
                     android:id="@+id/tvProfileNickBar"

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
@@ -41,8 +42,10 @@ import com.tamadev.ssay_mp.classes.RequestFriend;
 import com.tamadev.ssay_mp.classes.SolicitudPartida;
 import com.tamadev.ssay_mp.classes.UserFriendProfile;
 import com.tamadev.ssay_mp.utils.AlertDialogNewRequestFriend;
+import com.tamadev.ssay_mp.utils.AlertDialogNotification;
 import com.tamadev.ssay_mp.utils.RVAdapterRequestFriend;
 import com.tamadev.ssay_mp.utils.RecyclerViewAdapter;
+import com.tamadev.ssay_mp.utils.ResultCallback;
 import com.tamadev.ssay_mp.utils.SendNotificationFCM;
 
 import org.apache.commons.io.IOUtils;
@@ -76,6 +79,7 @@ public class InicioActivity extends AppCompatActivity {
     public static DatabaseReference DBrefFriendRequest;
     public static RecyclerViewAdapter adapter;
     public static ArrayList<RequestFriend> _dataListNewRequestFriend = new ArrayList<>();
+    public static MediaPlayer sountrack;
 
     private LinearLayoutManager layoutManager;
     private CircleImageView ivProfilePhoto, ivLvlIcon, ivProfilePhotoBar;
@@ -85,6 +89,8 @@ public class InicioActivity extends AppCompatActivity {
     private ArrayList<SolicitudPartida> _dataListSolicitudes= new ArrayList<>();
     private ArrayList<CrearPartida> _listaSolicitudPartidas = new ArrayList<>();
     private LottieAnimationView lottieAnimationView;
+    private DatabaseReference DBRefInicial;
+
 
 
     @Override
@@ -106,6 +112,49 @@ public class InicioActivity extends AppCompatActivity {
             DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(true);
             Perfil.ONLINE = true;
         }
+        if(sountrack == null||!sountrack.isPlaying()) {
+            sountrack = MediaPlayer.create(InicioActivity.this, R.raw.soundtrack1);
+            sountrack.setLooping(true);
+            sountrack.start();
+        }
+        DBRefInicial = FirebaseDatabase.getInstance().getReference();
+
+
+
+
+
+        DBRefInicial.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean _bServerOnline = Boolean.parseBoolean(dataSnapshot.child("ServidorOnline").getValue().toString());
+                double _dVersionActual = Double.parseDouble(dataSnapshot.child("Version").getValue().toString());
+
+                if(!_bServerOnline){
+                    new AlertDialogNotification(InicioActivity.this, "Servidor fuera de línea", "El servidor se encuentra fuera de linea. Contacte al administrador para mas información", "Aceptar", new ResultCallback() {
+                        @Override
+                        public void ResultCallbackDialog(int Result) {
+                            System.exit(0);
+                        }
+                    });
+
+                }
+                else if(Perfil.VERSION_APK < _dVersionActual){
+                    new AlertDialogNotification(InicioActivity.this, "Necesita actualizar el juego", "La versión instalada está demasiado desactualizada. Actualice la aplicación para seguir disfrutando", "Aceptar", new ResultCallback() {
+                        @Override
+                        public void ResultCallbackDialog(int Result) {
+                            System.exit(0);
+                        }
+                    });
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("userFCM").setValue(FirebaseInstanceId.getInstance().getToken());
         setSupportActionBar(toolbar);
@@ -148,9 +197,6 @@ public class InicioActivity extends AppCompatActivity {
                         Intent u = new Intent(InicioActivity.this,PerfilActivity.class);
                         startActivity(u);
                         finish();
-                        break;
-                    case R.id.nav_preferences:
-                        // Aca va a la pantalla de preferencias
                         break;
                     case R.id.nav_how_to_play:
                         // A definir como se hará. Muestra de pasos 1 por 1 o con un manual de ayuda
@@ -272,6 +318,7 @@ public class InicioActivity extends AppCompatActivity {
         if(Perfil.ONLINE && !Perfil.ACTIVITY_NAVIGATION){
             DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(false);
             Perfil.ONLINE = false;
+            sountrack.pause();
         }
     }
 
@@ -282,6 +329,7 @@ public class InicioActivity extends AppCompatActivity {
         if(!Perfil.ONLINE){
             DBrefUsuario.child("Usuarios").child(Perfil.USER_ID).child("Perfil").child("enLinea").setValue(true);
             Perfil.ONLINE = true;
+            sountrack.start();
         }
     }
 }

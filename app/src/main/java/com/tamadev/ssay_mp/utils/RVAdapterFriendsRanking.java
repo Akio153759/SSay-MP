@@ -42,8 +42,8 @@ public class RVAdapterFriendsRanking extends RecyclerView.Adapter<RVAdapterFrien
         holder.tvNick.setText(_dataListUsers.get(position).getUserID());
         holder.tvPosition.setText(position + 1 +"");
         if(_dataListUsers.get(position).getUserID().equals(Perfil.USER_ID)){
-            holder.bgItem.setBackgroundResource(R.drawable.bg_search_friend_pcolor);
-            holder.ivProfilePhoto.setForeground(context.getDrawable(R.drawable.circle_icon_primary_color_verde));
+            holder.bgItem.setBackgroundResource(R.drawable.bg_rounded_red);
+
             holder.tvNick.setTextColor(Color.parseColor("#FFFFFF"));
             holder.tvPosition.setTextColor(Color.parseColor("#FFFFFF"));
             holder.tvNick.setText("Tú");
